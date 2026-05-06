@@ -1,7 +1,7 @@
-import { useLiveQuery } from '@tanstack/react-db'
+import { eq, useLiveQuery } from '@tanstack/react-db'
 import { useEffect, useRef } from 'react'
 
-import { boardsCollection, type Board } from '#/db-collections'
+import { boardsCollection, type Board, type Cell } from '#/db-collections'
 
 import type { Collection } from '@tanstack/react-db'
 
@@ -48,20 +48,32 @@ export function useBoardsStream() {
     })
   }
 
-  return { sendCheck: sendCheck }
+  const createBoard = (size: number, name: string, cells: Cell[]) => {
+    fetch('/board/create', {
+      method: 'POST',
+      body: JSON.stringify({ size, name, cells }),
+    })
+  }
+
+  return { sendCheck, createBoard }
 }
 
 export function useBoards(uuid: string) {
-  const { data: board } = useLiveQuery(
-    (q) =>
-      q
-        .from({ board: boardsCollection })
-        .findOne()
-        .where((board) => board.board.id === uuid),
-    // .select(({ board }) => ({
-    // ...board,
-    // })),
+  const { data: board } = useLiveQuery((q) =>
+    q
+      .from({ board: boardsCollection })
+      .findOne()
+      .where((board) => eq(board.board.id, uuid)),
   )
 
   return board as Board
+}
+
+// Hook to get all boards
+export function useAllBoards() {
+  const { data: boards } = useLiveQuery((q) =>
+    q.from({ board: boardsCollection }).select(({ board }) => board),
+  )
+
+  return boards
 }

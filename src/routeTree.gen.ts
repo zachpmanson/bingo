@@ -15,6 +15,10 @@ import { Route as DemoTrpcTodoRouteImport } from './routes/demo/trpc-todo'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as DemoDbChatApiRouteImport } from './routes/demo/db-chat-api'
 import { Route as DemoDbChatRouteImport } from './routes/demo/db-chat'
+import { Route as BoardNewRouteImport } from './routes/board/new'
+import { Route as BoardLiveApiRouteImport } from './routes/board/live-api'
+import { Route as BoardListRouteImport } from './routes/board/list'
+import { Route as BoardUuidRouteImport } from './routes/board/$uuid'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api.trpc.$'
 
 const AboutRoute = AboutRouteImport.update({
@@ -47,6 +51,26 @@ const DemoDbChatRoute = DemoDbChatRouteImport.update({
   path: '/demo/db-chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BoardNewRoute = BoardNewRouteImport.update({
+  id: '/board/new',
+  path: '/board/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BoardLiveApiRoute = BoardLiveApiRouteImport.update({
+  id: '/board/live-api',
+  path: '/board/live-api',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BoardListRoute = BoardListRouteImport.update({
+  id: '/board/list',
+  path: '/board/list',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BoardUuidRoute = BoardUuidRouteImport.update({
+  id: '/board/$uuid',
+  path: '/board/$uuid',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
   id: '/api/trpc/$',
   path: '/api/trpc/$',
@@ -56,6 +80,10 @@ const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/board/$uuid': typeof BoardUuidRoute
+  '/board/list': typeof BoardListRoute
+  '/board/live-api': typeof BoardLiveApiRoute
+  '/board/new': typeof BoardNewRoute
   '/demo/db-chat': typeof DemoDbChatRoute
   '/demo/db-chat-api': typeof DemoDbChatApiRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
@@ -65,6 +93,10 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/board/$uuid': typeof BoardUuidRoute
+  '/board/list': typeof BoardListRoute
+  '/board/live-api': typeof BoardLiveApiRoute
+  '/board/new': typeof BoardNewRoute
   '/demo/db-chat': typeof DemoDbChatRoute
   '/demo/db-chat-api': typeof DemoDbChatApiRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
@@ -75,6 +107,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/board/$uuid': typeof BoardUuidRoute
+  '/board/list': typeof BoardListRoute
+  '/board/live-api': typeof BoardLiveApiRoute
+  '/board/new': typeof BoardNewRoute
   '/demo/db-chat': typeof DemoDbChatRoute
   '/demo/db-chat-api': typeof DemoDbChatApiRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
@@ -86,6 +122,10 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/board/$uuid'
+    | '/board/list'
+    | '/board/live-api'
+    | '/board/new'
     | '/demo/db-chat'
     | '/demo/db-chat-api'
     | '/demo/tanstack-query'
@@ -95,6 +135,10 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/board/$uuid'
+    | '/board/list'
+    | '/board/live-api'
+    | '/board/new'
     | '/demo/db-chat'
     | '/demo/db-chat-api'
     | '/demo/tanstack-query'
@@ -104,6 +148,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/board/$uuid'
+    | '/board/list'
+    | '/board/live-api'
+    | '/board/new'
     | '/demo/db-chat'
     | '/demo/db-chat-api'
     | '/demo/tanstack-query'
@@ -114,6 +162,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  BoardUuidRoute: typeof BoardUuidRoute
+  BoardListRoute: typeof BoardListRoute
+  BoardLiveApiRoute: typeof BoardLiveApiRoute
+  BoardNewRoute: typeof BoardNewRoute
   DemoDbChatRoute: typeof DemoDbChatRoute
   DemoDbChatApiRoute: typeof DemoDbChatApiRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
@@ -165,6 +217,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoDbChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/board/new': {
+      id: '/board/new'
+      path: '/board/new'
+      fullPath: '/board/new'
+      preLoaderRoute: typeof BoardNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/board/live-api': {
+      id: '/board/live-api'
+      path: '/board/live-api'
+      fullPath: '/board/live-api'
+      preLoaderRoute: typeof BoardLiveApiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/board/list': {
+      id: '/board/list'
+      path: '/board/list'
+      fullPath: '/board/list'
+      preLoaderRoute: typeof BoardListRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/board/$uuid': {
+      id: '/board/$uuid'
+      path: '/board/$uuid'
+      fullPath: '/board/$uuid'
+      preLoaderRoute: typeof BoardUuidRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/trpc/$': {
       id: '/api/trpc/$'
       path: '/api/trpc/$'
@@ -178,6 +258,10 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  BoardUuidRoute: BoardUuidRoute,
+  BoardListRoute: BoardListRoute,
+  BoardLiveApiRoute: BoardLiveApiRoute,
+  BoardNewRoute: BoardNewRoute,
   DemoDbChatRoute: DemoDbChatRoute,
   DemoDbChatApiRoute: DemoDbChatApiRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
