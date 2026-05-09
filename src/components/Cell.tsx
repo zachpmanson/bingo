@@ -22,17 +22,24 @@ export function Cell({
       ref.current.textContent = value
     }
   }, [value])
+
+  const backgroundColor = isChecked
+    ? 'bg-cell-checked'
+    : index % 2 === 0
+      ? 'bg-cell-light'
+      : 'bg-cell-dark'
+
   return (
     <div
-      className="text-black min-h-32 w-full h-full p-2 text-center flex flex-col items-center justify-center"
+      className={`text-black min-h-32 w-full h-full p-2 text-center flex flex-col items-center justify-center ${backgroundColor} ${canEdit ? 'cursor-text' : 'cursor-pointer select-none'}`}
       contentEditable={canEdit}
-      style={{
-        backgroundColor: isChecked
-          ? '#a0e7e5'
-          : index % 2 === 0
-            ? '#fe9798'
-            : '#fcd2d3',
-      }}
+      // style={{
+      //   backgroundColor: isChecked
+      //     ? '#a0e7e5'
+      //     : index % 2 === 0
+      //       ? '#fe9798'
+      //       : '#fcd2d3',
+      // }}
       ref={ref}
       onInput={(e) => {
         onChange?.(e.currentTarget.textContent ?? '')

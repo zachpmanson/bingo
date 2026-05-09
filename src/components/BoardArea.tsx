@@ -6,7 +6,17 @@ export default function BoardArea({ uuid }: { uuid: string }) {
   const board = useBoards(uuid)
 
   return (
-    <>
+    <div className="py-4 flex flex-col gap-4">
+      <div className="flex w-full justify-center">
+        <span
+          className="border-solid p-2 text-2xl"
+          style={{
+            fontFamily: 'Impact, serif',
+          }}
+        >
+          {board?.name ?? 'Loading...'}
+        </span>
+      </div>
       <BoardWrapper size={board?.size ?? 5}>
         {board?.cells.map((cell, index) => (
           <Cell
@@ -24,6 +34,6 @@ export default function BoardArea({ uuid }: { uuid: string }) {
           />
         ))}
       </BoardWrapper>
-    </>
+    </div>
   )
 }

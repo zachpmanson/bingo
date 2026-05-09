@@ -21,6 +21,7 @@ export default function BoardEdit() {
           fontFamily: 'Impact, serif',
         }}
         type="text"
+        placeholder="Title.."
         value={board.name}
         onChange={(e) => setBoard({ ...board, name: e.target.value })}
       />
@@ -70,9 +71,9 @@ export default function BoardEdit() {
         ))}
       </BoardWrapper>
 
-      <pre className="bg-white text-black w-full text-sm">
+      {/* <pre className="bg-white text-black w-full text-sm">
         {JSON.stringify(board, null, 2)}
-      </pre>
+      </pre> */}
     </div>
   )
 }
