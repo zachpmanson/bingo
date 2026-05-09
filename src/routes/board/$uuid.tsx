@@ -4,6 +4,7 @@ import BoardArea from '#/components/BoardArea.tsx'
 
 export const Route = createFileRoute('/board/$uuid')({
   component: App,
+  ssr: false,
 })
 
 function App() {

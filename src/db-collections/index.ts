@@ -19,12 +19,12 @@ export const messagesCollection = createCollection(
   }),
 )
 
-const CellSchema = z.object({
+export const CellSchema = z.object({
   text: z.string(),
   checked: z.boolean(),
 })
 
-const BoardSchema = z.object({
+export const BoardSchema = z.object({
   id: z.uuidv4(),
   name: z.string(),
   size: z.number(),
@@ -32,6 +32,7 @@ const BoardSchema = z.object({
 })
 
 export type Board = z.infer<typeof BoardSchema>
+export type Cell = z.infer<typeof CellSchema>
 
 export const boardsCollection = createCollection(
   localOnlyCollectionOptions({
