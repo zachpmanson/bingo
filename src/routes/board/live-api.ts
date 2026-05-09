@@ -6,20 +6,14 @@ export const Route = createFileRoute('/board/live-api')({
   server: {
     handlers: {
       GET: () => {
-        const tag = `[live-api ${Math.random().toString(36).slice(2, 7)}]`
-        console.log(
-          `${tag} GET connected — collection has ${serverBoardsCollection.state.size} boards`,
-        )
         let unsubscribe: (() => void) | undefined
-        let heartbeat: ReturnType<typeof setInterval>
-        const encoder = new TextEncoder()
-        const stream = new ReadableStream<Uint8Array>({
+        const stream = new ReadableStream({
           start(controller) {
             let closed = false
             const safeEnqueue = (line: string) => {
               if (closed) return
               try {
-                controller.enqueue(encoder.encode(line))
+                controller.enqueue(line)
               } catch {
                 closed = true
                 unsubscribe?.()
@@ -30,12 +24,7 @@ export const Route = createFileRoute('/board/live-api')({
                 JSON.stringify({ type: 'insert', value: board }) + '\n',
               )
             }
-            heartbeat = setInterval(() => {
-              console.log(`${tag} heartbeat tick`)
-              safeEnqueue(JSON.stringify({ type: 'ping' }) + '\n')
-            }, 1000)
             unsubscribe = serverBoardsCollection.subscribeChanges((changes) => {
-              console.log(`${tag} subscribeChanges fired:`, changes.length, 'change(s)')
               for (const change of changes) {
                 if (change.type === 'delete') {
                   safeEnqueue(
@@ -53,8 +42,6 @@ export const Route = createFileRoute('/board/live-api')({
             })
           },
           cancel() {
-            console.log(`${tag} stream cancelled`)
-            clearInterval(heartbeat)
             unsubscribe?.()
           },
         })
@@ -62,9 +49,6 @@ export const Route = createFileRoute('/board/live-api')({
         return new Response(stream, {
           headers: {
             'Content-Type': 'application/x-ndjson',
-            'Cache-Control': 'no-cache, no-transform',
-            'Content-Encoding': 'identity',
-            'X-Accel-Buffering': 'no',
           },
         })
       },
