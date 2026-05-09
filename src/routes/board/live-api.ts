@@ -6,7 +6,7 @@ export const Route = createFileRoute('/board/live-api')({
   server: {
     handlers: {
       GET: () => {
-        let unsubscribe: (() => void) | undefined
+        let subscription: { unsubscribe: () => void } | undefined
         const stream = new ReadableStream({
           start(controller) {
             let closed = false
@@ -16,7 +16,7 @@ export const Route = createFileRoute('/board/live-api')({
                 controller.enqueue(line)
               } catch {
                 closed = true
-                unsubscribe?.()
+                subscription?.unsubscribe()
               }
             }
             for (const [_id, board] of serverBoardsCollection.state) {
@@ -24,7 +24,7 @@ export const Route = createFileRoute('/board/live-api')({
                 JSON.stringify({ type: 'insert', value: board }) + '\n',
               )
             }
-            unsubscribe = serverBoardsCollection.subscribeChanges((changes) => {
+            subscription = serverBoardsCollection.subscribeChanges((changes) => {
               for (const change of changes) {
                 if (change.type === 'delete') {
                   safeEnqueue(
@@ -42,7 +42,7 @@ export const Route = createFileRoute('/board/live-api')({
             })
           },
           cancel() {
-            unsubscribe?.()
+            subscription?.unsubscribe()
           },
         })
 
