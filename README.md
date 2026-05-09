@@ -1,4 +1,6 @@
-Welcome to your new TanStack Start app! 
+# Bingo!
+
+It's bingo.
 
 # Getting Started
 
