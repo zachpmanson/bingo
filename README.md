@@ -55,10 +55,6 @@ ppnpm dlx shadcn@latest add button
 
 
 
-## Routing
-
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
-
 ### Adding A Route
 
 To add a new route to your application just add a new file in the `./src/routes` directory.
