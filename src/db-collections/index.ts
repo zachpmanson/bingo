@@ -60,24 +60,32 @@ export const boardsCollection = createCollection({
         let buffer = ''
         let firstBatch = true
         for (;;) {
+          console.log('[boards sync] awaiting read…')
           const { done, value } = await reader.read()
+          console.log('[boards sync] read returned, done=', done, 'bytes=', value?.byteLength)
           if (done) break
           buffer += decoder.decode(value, { stream: true })
           const lines = buffer.split('\n')
           buffer = lines.pop() ?? ''
           const messages = lines
             .filter((l) => l.length > 0)
-            .map((l) => JSON.parse(l) as StreamEnvelope)
+            .map((l) => JSON.parse(l) as StreamEnvelope | { type: 'ping' })
+            .filter((m): m is StreamEnvelope => m.type !== 'ping')
           if (messages.length === 0) continue
-          begin()
-          for (const m of messages) {
-            if (m.type === 'delete') {
-              write({ type: 'delete', key: m.key })
-            } else {
-              write({ type: m.type, value: m.value })
+          try {
+            begin()
+            for (const m of messages) {
+              if (m.type === 'delete') {
+                write({ type: 'delete', key: m.key })
+              } else {
+                write({ type: m.type, value: m.value })
+              }
             }
+            commit()
+            console.log('[boards sync] applied', messages.length, 'message(s)')
+          } catch (e) {
+            console.error('[boards sync] commit error', e)
           }
-          commit()
           if (firstBatch) {
             firstBatch = false
             markReady()

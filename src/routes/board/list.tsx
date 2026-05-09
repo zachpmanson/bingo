@@ -1,3 +1,4 @@
+import Button from '#/components/Button.tsx'
 import { useAllBoards } from '#/hooks/useBoard.ts'
 
 import { createFileRoute } from '@tanstack/react-router'
@@ -13,17 +14,17 @@ export default function BoardListPage() {
   return (
     <div>
       <h1>All Boards</h1>
-      <ul>
+      <div className="flex flex-col">
         {boards && boards.length > 0 ? (
           boards.map((board) => (
-            <li key={board.id}>
-              <strong>{board.name}</strong> (size: {board.size})
-            </li>
+            <Button to="/board/$uuid" params={{ uuid: board.id }}>
+              <strong>{board.name}</strong> (size: {board.size}) ({board.id})
+            </Button>
           ))
         ) : (
           <li>No boards found.</li>
         )}
-      </ul>
+      </div>
     </div>
   )
 }

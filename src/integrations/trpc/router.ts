@@ -41,9 +41,11 @@ const boardsRouter = {
       }),
     )
     .mutation(({ input }) => {
+      console.log('[trpc setCell] received', input, 'collection size:', serverBoardsCollection.state.size)
       serverBoardsCollection.update(input.boardId, (draft) => {
         draft.cells[input.cellId].checked = input.checked
       })
+      console.log('[trpc setCell] update applied')
     }),
 } satisfies TRPCRouterRecord
 
