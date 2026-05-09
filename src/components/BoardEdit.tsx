@@ -4,14 +4,22 @@ import { boardsCollection, type Board } from '../db-collections'
 import Button from './Button'
 import { BoardWrapper, Cell } from './Cell'
 
-export default function BoardEdit() {
+export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
   const navigate = useNavigate()
-  const [board, setBoard] = useState<Board>({
-    id: '',
-    name: '',
-    cells: Array(25).fill({ text: 'TO DO', checked: false }),
-    size: 5,
-  })
+  const [board, setBoard] = useState<Board>(
+    initialBoard
+      ? {
+          ...initialBoard,
+          cells: initialBoard.cells.map((c) => ({ text: c.text, checked: false })),
+        }
+      : {
+          id: '',
+          sharingId: '',
+          name: '',
+          cells: Array(25).fill({ text: 'TO DO', checked: false }),
+          size: 5,
+        },
+  )
 
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -41,7 +49,11 @@ export default function BoardEdit() {
         />
         <Button
           onClick={() => {
-            const newBoard: Board = { ...board, id: crypto.randomUUID() }
+            const newBoard: Board = {
+              ...board,
+              id: crypto.randomUUID(),
+              sharingId: crypto.randomUUID(),
+            }
             boardsCollection.insert(newBoard)
             navigate({
               to: '/board/$uuid',

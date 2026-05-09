@@ -1,9 +1,15 @@
 import { boardsCollection } from '#/db-collections'
 import { useBoards } from '#/hooks/useBoard.ts'
+import { useClipboard } from '#/hooks/useClipboard.ts'
+import Button from './Button'
 import { BoardWrapper, Cell } from './Cell'
 
 export default function BoardArea({ uuid }: { uuid: string }) {
   const board = useBoards(uuid)
+  const { share, copiedKey } = useClipboard()
+
+  const shareLink = (key: string, path: string, title: string) =>
+    void share(key, `${window.location.origin}${path}`, { title })
 
   return (
     <div className="py-4 flex flex-col gap-4">
@@ -34,6 +40,35 @@ export default function BoardArea({ uuid }: { uuid: string }) {
           />
         ))}
       </BoardWrapper>
+      {board && (
+        <div className="flex justify-center gap-2">
+          <Button
+            onClick={() =>
+              void shareLink(
+                'live',
+                `/board/${board.id}`,
+                `${board.name} (live)`,
+              )
+            }
+          >
+            {copiedKey === 'live' ? 'Copied!' : 'Share live link'}
+          </Button>
+          <Button
+            onClick={() =>
+              void shareLink(
+                'copy',
+                `/share/${board.sharingId}`,
+                `${board.name} (copy)`,
+              )
+            }
+          >
+            {copiedKey === 'copy' ? 'Copied!' : 'Share a copy'}
+          </Button>
+          <Button to={'/board/$uuid/edit'} params={{ uuid: board.id }}>
+            Edit
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

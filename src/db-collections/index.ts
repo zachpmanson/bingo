@@ -28,6 +28,7 @@ export const CellSchema = z.object({
 
 export const BoardSchema = z.object({
   id: z.uuidv4(),
+  sharingId: z.uuidv4(),
   name: z.string(),
   size: z.number(),
   cells: z.array(CellSchema),

@@ -11,10 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ShareUuidRouteImport } from './routes/share/$uuid'
 import { Route as BoardNewRouteImport } from './routes/board/new'
 import { Route as BoardLiveApiRouteImport } from './routes/board/live-api'
 import { Route as BoardListRouteImport } from './routes/board/list'
 import { Route as BoardUuidRouteImport } from './routes/board/$uuid'
+import { Route as BoardUuidEditRouteImport } from './routes/board/$uuid_.edit'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api.trpc.$'
 
 const AboutRoute = AboutRouteImport.update({
@@ -25,6 +27,11 @@ const AboutRoute = AboutRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShareUuidRoute = ShareUuidRouteImport.update({
+  id: '/share/$uuid',
+  path: '/share/$uuid',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BoardNewRoute = BoardNewRouteImport.update({
@@ -47,6 +54,11 @@ const BoardUuidRoute = BoardUuidRouteImport.update({
   path: '/board/$uuid',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BoardUuidEditRoute = BoardUuidEditRouteImport.update({
+  id: '/board/$uuid_/edit',
+  path: '/board/$uuid/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
   id: '/api/trpc/$',
   path: '/api/trpc/$',
@@ -60,7 +72,9 @@ export interface FileRoutesByFullPath {
   '/board/list': typeof BoardListRoute
   '/board/live-api': typeof BoardLiveApiRoute
   '/board/new': typeof BoardNewRoute
+  '/share/$uuid': typeof ShareUuidRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
+  '/board/$uuid/edit': typeof BoardUuidEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -69,7 +83,9 @@ export interface FileRoutesByTo {
   '/board/list': typeof BoardListRoute
   '/board/live-api': typeof BoardLiveApiRoute
   '/board/new': typeof BoardNewRoute
+  '/share/$uuid': typeof ShareUuidRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
+  '/board/$uuid/edit': typeof BoardUuidEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -79,7 +95,9 @@ export interface FileRoutesById {
   '/board/list': typeof BoardListRoute
   '/board/live-api': typeof BoardLiveApiRoute
   '/board/new': typeof BoardNewRoute
+  '/share/$uuid': typeof ShareUuidRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
+  '/board/$uuid_/edit': typeof BoardUuidEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -90,7 +108,9 @@ export interface FileRouteTypes {
     | '/board/list'
     | '/board/live-api'
     | '/board/new'
+    | '/share/$uuid'
     | '/api/trpc/$'
+    | '/board/$uuid/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -99,7 +119,9 @@ export interface FileRouteTypes {
     | '/board/list'
     | '/board/live-api'
     | '/board/new'
+    | '/share/$uuid'
     | '/api/trpc/$'
+    | '/board/$uuid/edit'
   id:
     | '__root__'
     | '/'
@@ -108,7 +130,9 @@ export interface FileRouteTypes {
     | '/board/list'
     | '/board/live-api'
     | '/board/new'
+    | '/share/$uuid'
     | '/api/trpc/$'
+    | '/board/$uuid_/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -118,7 +142,9 @@ export interface RootRouteChildren {
   BoardListRoute: typeof BoardListRoute
   BoardLiveApiRoute: typeof BoardLiveApiRoute
   BoardNewRoute: typeof BoardNewRoute
+  ShareUuidRoute: typeof ShareUuidRoute
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
+  BoardUuidEditRoute: typeof BoardUuidEditRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -135,6 +161,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/share/$uuid': {
+      id: '/share/$uuid'
+      path: '/share/$uuid'
+      fullPath: '/share/$uuid'
+      preLoaderRoute: typeof ShareUuidRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/board/new': {
@@ -165,6 +198,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BoardUuidRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/board/$uuid_/edit': {
+      id: '/board/$uuid_/edit'
+      path: '/board/$uuid/edit'
+      fullPath: '/board/$uuid/edit'
+      preLoaderRoute: typeof BoardUuidEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/trpc/$': {
       id: '/api/trpc/$'
       path: '/api/trpc/$'
@@ -182,7 +222,9 @@ const rootRouteChildren: RootRouteChildren = {
   BoardListRoute: BoardListRoute,
   BoardLiveApiRoute: BoardLiveApiRoute,
   BoardNewRoute: BoardNewRoute,
+  ShareUuidRoute: ShareUuidRoute,
   ApiTrpcSplatRoute: ApiTrpcSplatRoute,
+  BoardUuidEditRoute: BoardUuidEditRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
