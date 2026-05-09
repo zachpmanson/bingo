@@ -1,14 +1,15 @@
-import { useBoardsStream } from '#/hooks/useBoard.ts'
-import { useEffect, useRef, useState } from 'react'
-import type { Board } from '../db-collections'
+import { useNavigate } from '@tanstack/react-router'
+import { useState } from 'react'
+import { boardsCollection, type Board } from '../db-collections'
 import Button from './Button'
+import { BoardWrapper, Cell } from './Cell'
 
 export default function BoardEdit() {
-  const { createBoard } = useBoardsStream()
+  const navigate = useNavigate()
   const [board, setBoard] = useState<Board>({
     id: '',
     name: '',
-    cells: Array(25).fill({ text: '', checked: false }),
+    cells: Array(25).fill({ text: 'TO DO', checked: false }),
     size: 5,
   })
 
@@ -38,24 +39,26 @@ export default function BoardEdit() {
           }}
         />
         <Button
-          onClick={() => createBoard(board.size, board.name, board.cells)}
+          onClick={() => {
+            const newBoard: Board = { ...board, id: crypto.randomUUID() }
+            boardsCollection.insert(newBoard)
+            navigate({
+              to: '/board/$uuid',
+              params: { uuid: newBoard.id },
+            })
+          }}
         >
           Create Board
         </Button>
       </div>
 
-      <div
-        className="grid gap-0.5 bg-black p-0.5"
-        style={{
-          // gridTemplateRows: 'auto auto 1fr 1fr 1fr auto auto',
-          gridTemplateColumns: `repeat(${board.size}, minmax(0, 1fr))`,
-        }}
-      >
+      <BoardWrapper size={board.size}>
         {board?.cells.map((cell, index) => (
-          <CellEditorDiv
+          <Cell
             key={index}
             value={cell.text}
             index={index}
+            canEdit
             onChange={(text) => {
               setBoard((prev) => {
                 let newCells = [...prev.cells]
@@ -65,63 +68,11 @@ export default function BoardEdit() {
             }}
           />
         ))}
-      </div>
+      </BoardWrapper>
 
       <pre className="bg-white text-black w-full text-sm">
         {JSON.stringify(board, null, 2)}
       </pre>
     </div>
-  )
-}
-
-// CellEditor component for contentEditable with ref
-function CellEditorDiv({
-  value,
-  onChange,
-
-  index,
-}: {
-  index: number
-  value: string
-  onChange: (text: string) => void
-}) {
-  const ref = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    if (ref.current && ref.current.textContent !== value) {
-      ref.current.textContent = value
-    }
-  }, [value])
-  return (
-    <div
-      className="text-black min-h-32 w-full h-full p-2 text-center flex flex-col items-center justify-center"
-      contentEditable
-      style={{
-        backgroundColor: index % 2 === 0 ? '#fe9798' : '#fcd2d3',
-      }}
-      ref={ref}
-      onInput={(e) => {
-        onChange(e.currentTarget.textContent ?? '')
-      }}
-      suppressContentEditableWarning
-    />
-  )
-}
-
-function CellEditorTextarea({
-  value,
-  onChange,
-}: {
-  value: string
-  onChange: (text: string) => void
-}) {
-  return (
-    <textarea
-      style={{
-        resize: 'none',
-      }}
-      className="border text-black min-h-32 w-full h-full p-2 text-center"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-    />
   )
 }

@@ -1,28 +1,29 @@
-import { useBoards, useBoardsStream } from '#/hooks/useBoard.ts'
+import { boardsCollection } from '#/db-collections'
+import { useBoards } from '#/hooks/useBoard.ts'
+import { BoardWrapper, Cell } from './Cell'
 
 export default function BoardArea({ uuid }: { uuid: string }) {
-  const { sendCheck } = useBoardsStream()
   const board = useBoards(uuid)
 
   return (
     <>
-      <div
-        className="grid"
-        style={{
-          gridTemplateColumns: `repeat(${board?.cells.length || 0}, minmax(0, 1fr))`,
-        }}
-      >
+      <BoardWrapper size={board?.size ?? 5}>
         {board?.cells.map((cell, index) => (
-          <button
+          <Cell
             key={index}
-            className="border p-4"
-            onClick={() => sendCheck(board.id, index, !cell.checked)}
-          >
-            {cell.checked ? 'X' : ''}
-            {cell.text}
-          </button>
+            index={index}
+            value={cell.text}
+            onChange={() => {}}
+            canEdit={false}
+            isChecked={cell.checked}
+            onClick={() =>
+              boardsCollection.update(uuid, (draft) => {
+                draft.cells[index].checked = !cell.checked
+              })
+            }
+          />
         ))}
-      </div>
+      </BoardWrapper>
     </>
   )
 }

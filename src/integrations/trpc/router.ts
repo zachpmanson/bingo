@@ -1,5 +1,8 @@
 import { z } from 'zod'
 
+import { BoardSchema } from '#/db-collections'
+import { serverBoardsCollection } from '#/server/boards'
+
 import { createTRPCRouter, publicProcedure } from './init'
 
 import type { TRPCRouterRecord } from '@trpc/server'
@@ -21,7 +24,31 @@ const todosRouter = {
     }),
 } satisfies TRPCRouterRecord
 
+const boardsRouter = {
+  create: publicProcedure
+    .input(BoardSchema)
+    .output(BoardSchema)
+    .mutation(({ input }) => {
+      serverBoardsCollection.insert(input)
+      return input
+    }),
+  setCell: publicProcedure
+    .input(
+      z.object({
+        boardId: z.string(),
+        cellId: z.number().int().nonnegative(),
+        checked: z.boolean(),
+      }),
+    )
+    .mutation(({ input }) => {
+      serverBoardsCollection.update(input.boardId, (draft) => {
+        draft.cells[input.cellId].checked = input.checked
+      })
+    }),
+} satisfies TRPCRouterRecord
+
 export const trpcRouter = createTRPCRouter({
   todos: todosRouter,
+  boards: boardsRouter,
 })
 export type TRPCRouter = typeof trpcRouter
