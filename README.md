@@ -1,6 +1,6 @@
 # Bingo!
 
-It's bingo.
+It's bingo. Online!
 
 # Getting Started
 
