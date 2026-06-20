@@ -1,7 +1,7 @@
-import { useEffect } from 'react'
 import { boardsCollection } from '#/db-collections'
 import { useBoards } from '#/hooks/useBoard.ts'
 import { useClipboard } from '#/hooks/useClipboard.ts'
+import { useEffect } from 'react'
 import Button from './Button'
 import { BoardWrapper, Cell } from './Cell'
 
@@ -22,7 +22,7 @@ export default function BoardArea({ uuid }: { uuid: string }) {
         <span
           className="border-solid p-2 text-2xl"
           style={{
-            fontFamily: "'Anton', Impact, sans-serif",
+            fontFamily: "'Impact','Anton', Impact, sans-serif",
           }}
         >
           {board?.name ?? 'Loading...'}
