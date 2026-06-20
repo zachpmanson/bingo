@@ -14,6 +14,7 @@ export default function BoardListPage() {
   return (
     <div>
       <h1>All Boards</h1>
+      <Button to="/board/new">Create New Board</Button>
       <div className="flex flex-col">
         {boards && boards.length > 0 ? (
           boards.map((board) => (
