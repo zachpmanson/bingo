@@ -31,7 +31,7 @@ export function Cell({
 
   return (
     <div
-      className={`relative text-black aspect-square w-full h-full p-2 flex flex-col items-center justify-center transition-all duration-200 ease-out ${isChecked ? 'scale-100 border-[#015ff8] border-[5px]' : 'scale-100'} ${backgroundColor} ${canEdit ? 'cursor-text' : 'cursor-pointer select-none'}`}
+      className={`relative text-black aspect-square w-full min-h-0 overflow-hidden p-2 flex flex-col items-center justify-center transition-all duration-200 ease-out ${isChecked ? 'scale-100 border-[#015ff8] border-[5px]' : 'scale-100'} ${backgroundColor} ${canEdit ? 'cursor-text' : 'cursor-pointer select-none'}`}
       onClick={onClick}
     >
       <svg
