@@ -168,20 +168,48 @@ const streamBoards = async (
   }
 }
 
+// If leadership can't be acquired and no data arrives within this window, assume
+// the lock is wedged (e.g. a frozen/bfcached page on mobile still holds it after
+// a refresh) and stream directly so we never hang on the loading screen.
+const RESCUE_TIMEOUT_MS = 1500
+
 const sharedSync = (cb: SyncCallbacks) => {
   const ctrl = new AbortController()
   const channel = new BroadcastChannel('boards-sync')
   const replyId = crypto.randomUUID()
   let ready = false
-  const ensureReady = () => {
-    if (ready) return
-    ready = true
-    cb.markReady()
-  }
 
   // Leader maintains an authoritative mirror so it can answer snapshot-requests.
   const leaderState = new Map<string, Board>()
   let isLeader = false
+
+  // Rescue: a direct fallback stream used only when leader election wedges.
+  const rescue = new AbortController()
+  let rescuing = false
+  const startRescue = () => {
+    if (rescuing || isLeader || ctrl.signal.aborted) return
+    rescuing = true
+    void streamBoards(rescue.signal, (envelopes) => {
+      applyBatch(envelopes, cb)
+      ensureReady()
+    }).catch((err) => {
+      if (!rescue.signal.aborted) console.error('boards rescue error', err)
+    })
+  }
+  let rescueTimer: ReturnType<typeof setTimeout> | undefined = setTimeout(
+    startRescue,
+    RESCUE_TIMEOUT_MS,
+  )
+
+  const ensureReady = () => {
+    if (rescueTimer !== undefined) {
+      clearTimeout(rescueTimer)
+      rescueTimer = undefined
+    }
+    if (ready) return
+    ready = true
+    cb.markReady()
+  }
 
   channel.addEventListener('message', (e: MessageEvent<ChannelMessage>) => {
     const msg = e.data
@@ -220,6 +248,8 @@ const sharedSync = (cb: SyncCallbacks) => {
       () =>
         new Promise<void>((resolve) => {
           isLeader = true
+          // We're the authoritative streamer now; drop any rescue fallback.
+          rescue.abort()
           ctrl.signal.addEventListener('abort', () => resolve(), { once: true })
 
           streamBoards(ctrl.signal, (envelopes) => {
@@ -244,6 +274,8 @@ const sharedSync = (cb: SyncCallbacks) => {
     })
 
   return () => {
+    if (rescueTimer !== undefined) clearTimeout(rescueTimer)
+    rescue.abort()
     ctrl.abort()
     channel.close()
   }
