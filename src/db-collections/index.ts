@@ -174,20 +174,23 @@ const streamBoards = async (
 const RESCUE_TIMEOUT_MS = 1500
 
 const sharedSync = (cb: SyncCallbacks) => {
-  const ctrl = new AbortController()
   const channel = new BroadcastChannel('boards-sync')
   const replyId = crypto.randomUUID()
+  let destroyed = false
   let ready = false
 
   // Leader maintains an authoritative mirror so it can answer snapshot-requests.
   const leaderState = new Map<string, Board>()
   let isLeader = false
+  // Controls the current leadership attempt; null when not leading/trying.
+  let leaderCtrl: AbortController | null = null
 
-  // Rescue: a direct fallback stream used only when leader election wedges.
+  // Rescue: a direct fallback stream, used only if we can neither acquire the
+  // lock nor hear from a leader (e.g. the lock was never released).
   const rescue = new AbortController()
   let rescuing = false
   const startRescue = () => {
-    if (rescuing || isLeader || ctrl.signal.aborted) return
+    if (rescuing || isLeader || destroyed) return
     rescuing = true
     void streamBoards(rescue.signal, (envelopes) => {
       applyBatch(envelopes, cb)
@@ -241,18 +244,22 @@ const sharedSync = (cb: SyncCallbacks) => {
     replyTo: replyId,
   } satisfies ChannelMessage)
 
-  navigator.locks
-    .request(
-      'boards-sync-leader',
-      { signal: ctrl.signal },
-      () =>
+  // Try to become the single upstream streamer. Re-runnable: called again on
+  // focus so a page that couldn't lead at load (e.g. a frozen/bfcached page on
+  // mobile still held the lock) grabs leadership the moment it's foregrounded.
+  const becomeLeader = () => {
+    if (destroyed || isLeader || leaderCtrl || !isVisible()) return
+    const lc = new AbortController()
+    leaderCtrl = lc
+    navigator.locks
+      .request('boards-sync-leader', { signal: lc.signal }, () =>
         new Promise<void>((resolve) => {
           isLeader = true
           // We're the authoritative streamer now; drop any rescue fallback.
           rescue.abort()
-          ctrl.signal.addEventListener('abort', () => resolve(), { once: true })
+          lc.signal.addEventListener('abort', () => resolve(), { once: true })
 
-          streamBoards(ctrl.signal, (envelopes) => {
+          streamBoards(lc.signal, (envelopes) => {
             for (const m of envelopes) {
               if (m.type === 'delete') leaderState.delete(m.key)
               else leaderState.set(m.value.id, m.value)
@@ -264,19 +271,56 @@ const sharedSync = (cb: SyncCallbacks) => {
             } satisfies ChannelMessage)
             ensureReady()
           }).catch((err) => {
-            if (!ctrl.signal.aborted) console.error('boards sync error', err)
+            if (!lc.signal.aborted) console.error('boards sync error', err)
             resolve()
           })
         }),
-    )
-    .catch((err) => {
-      if (!ctrl.signal.aborted) console.error('boards lock error', err)
-    })
+      )
+      .catch((err) => {
+        if (!lc.signal.aborted) console.error('boards lock error', err)
+      })
+      .finally(() => {
+        isLeader = false
+        if (leaderCtrl === lc) leaderCtrl = null
+      })
+  }
+
+  // Release the lock when backgrounded so another foreground page — including the
+  // next page after a refresh — can take over instead of waiting on us.
+  const releaseLeader = () => {
+    leaderCtrl?.abort()
+  }
+
+  const onForeground = () => becomeLeader()
+  const onVisibility = () => {
+    if (isVisible()) becomeLeader()
+    else releaseLeader()
+  }
+
+  if (typeof window !== 'undefined') {
+    window.addEventListener('focus', onForeground)
+    window.addEventListener('pageshow', onForeground)
+    window.addEventListener('pagehide', releaseLeader)
+  }
+  if (typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', onVisibility)
+  }
+
+  becomeLeader()
 
   return () => {
+    destroyed = true
     if (rescueTimer !== undefined) clearTimeout(rescueTimer)
     rescue.abort()
-    ctrl.abort()
+    releaseLeader()
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('focus', onForeground)
+      window.removeEventListener('pageshow', onForeground)
+      window.removeEventListener('pagehide', releaseLeader)
+    }
+    if (typeof document !== 'undefined') {
+      document.removeEventListener('visibilitychange', onVisibility)
+    }
     channel.close()
   }
 }
