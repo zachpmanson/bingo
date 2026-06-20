@@ -3,11 +3,15 @@ import { useAllBoards } from '#/hooks/useBoard.ts'
 
 import { createFileRoute } from '@tanstack/react-router'
 
+import { seo } from '#/lib/seo'
+
 export const Route = createFileRoute('/')({
   component: BoardListPage,
   ssr: false,
   head: () => ({
-    meta: [{ title: 'Bingo' }],
+    meta: seo({
+      description: 'Make, share, and play custom bingo boards.',
+    }),
   }),
 })
 

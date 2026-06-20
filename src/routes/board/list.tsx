@@ -1,4 +1,5 @@
 import Button from '#/components/Button.tsx'
+import { seo } from '#/lib/seo'
 import { useAllBoards } from '#/hooks/useBoard.ts'
 
 import { createFileRoute } from '@tanstack/react-router'
@@ -6,6 +7,12 @@ import { createFileRoute } from '@tanstack/react-router'
 export const Route = createFileRoute('/board/list')({
   component: BoardListPage,
   ssr: false,
+  head: () => ({
+    meta: seo({
+      title: 'All Boards',
+      description: 'Browse your bingo boards.',
+    }),
+  }),
 })
 
 export default function BoardListPage() {

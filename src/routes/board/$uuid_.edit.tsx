@@ -1,13 +1,17 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import BoardEdit from '#/components/BoardEdit.tsx'
+import { seo } from '#/lib/seo'
 import { useBoards } from '#/hooks/useBoard.ts'
 
 export const Route = createFileRoute('/board/$uuid_/edit')({
   component: App,
   ssr: false,
   head: () => ({
-    meta: [{ title: 'Edit Board' }],
+    meta: seo({
+      title: 'Edit Board',
+      description: 'Edit your custom bingo board.',
+    }),
   }),
 })
 

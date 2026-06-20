@@ -1,7 +1,15 @@
 import { createFileRoute } from '@tanstack/react-router'
 
+import { seo } from '#/lib/seo'
+
 export const Route = createFileRoute('/about')({
   component: About,
+  head: () => ({
+    meta: seo({
+      title: 'About',
+      description: 'About this bingo app.',
+    }),
+  }),
 })
 
 function About() {

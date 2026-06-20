@@ -9,6 +9,8 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import TanStackDBDevtools from '../integrations/tanstack-db/devtools'
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
+import { seo } from '#/lib/seo'
+
 import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
@@ -34,9 +36,9 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         name: 'viewport',
         content: 'width=device-width, initial-scale=1',
       },
-      {
-        title: 'Bingo',
-      },
+      ...seo({
+        description: 'Make, share, and play custom bingo boards.',
+      }),
     ],
     links: [
       {
