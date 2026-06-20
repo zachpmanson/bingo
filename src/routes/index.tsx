@@ -6,6 +6,9 @@ import { createFileRoute } from '@tanstack/react-router'
 export const Route = createFileRoute('/')({
   component: BoardListPage,
   ssr: false,
+  head: () => ({
+    meta: [{ title: 'Bingo' }],
+  }),
 })
 
 export default function BoardListPage() {

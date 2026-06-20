@@ -6,6 +6,9 @@ import { useBoards } from '#/hooks/useBoard.ts'
 export const Route = createFileRoute('/board/$uuid_/edit')({
   component: App,
   ssr: false,
+  head: () => ({
+    meta: [{ title: 'Edit Board' }],
+  }),
 })
 
 function App() {
