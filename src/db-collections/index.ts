@@ -71,7 +71,41 @@ const applyBatch = (
   }
 }
 
-const streamBoards = async (
+const MAX_BACKOFF_MS = 15000
+
+const isVisible = () =>
+  typeof document === 'undefined' || document.visibilityState === 'visible'
+
+// Resolves after `ms`, or early when the app returns to the foreground / regains
+// network — so a dropped connection recovers immediately on resume.
+const reconnectDelay = (ms: number, signal: AbortSignal) =>
+  new Promise<void>((resolve) => {
+    if (ms <= 0 || signal.aborted) return resolve()
+    const wake = () => {
+      cleanup()
+      resolve()
+    }
+    const onVisible = () => {
+      if (isVisible()) wake()
+    }
+    const timer = setTimeout(wake, ms)
+    const cleanup = () => {
+      clearTimeout(timer)
+      signal.removeEventListener('abort', wake)
+      if (typeof document !== 'undefined')
+        document.removeEventListener('visibilitychange', onVisible)
+      if (typeof window !== 'undefined')
+        window.removeEventListener('online', wake)
+    }
+    signal.addEventListener('abort', wake, { once: true })
+    if (typeof document !== 'undefined')
+      document.addEventListener('visibilitychange', onVisible)
+    if (typeof window !== 'undefined')
+      window.addEventListener('online', wake)
+  })
+
+// Read one NDJSON stream until it ends, errors, or `signal` aborts.
+const readStream = async (
   signal: AbortSignal,
   onBatch: (envelopes: StreamEnvelope[]) => void,
 ) => {
@@ -90,6 +124,47 @@ const streamBoards = async (
       .filter((l) => l.length > 0)
       .map((l) => JSON.parse(l) as StreamEnvelope)
     if (envelopes.length > 0) onBatch(envelopes)
+  }
+}
+
+const streamBoards = async (
+  signal: AbortSignal,
+  onBatch: (envelopes: StreamEnvelope[]) => void,
+) => {
+  let backoff = 1000
+  while (!signal.aborted) {
+    // Per-connection controller: lets us drop a (possibly stalled) stream on
+    // resume without tearing down the whole sync.
+    const conn = new AbortController()
+    const abortConn = () => conn.abort()
+    // Mobile browsers freeze background fetches; force a fresh connection when
+    // the app comes back to the foreground or the network returns.
+    const onVisible = () => {
+      if (isVisible()) abortConn()
+    }
+    signal.addEventListener('abort', abortConn, { once: true })
+    if (typeof document !== 'undefined')
+      document.addEventListener('visibilitychange', onVisible)
+    if (typeof window !== 'undefined')
+      window.addEventListener('online', abortConn)
+
+    try {
+      await readStream(conn.signal, onBatch)
+      backoff = 1000
+    } catch (err) {
+      if (signal.aborted) return
+      if (!conn.signal.aborted) console.error('boards stream error', err)
+    } finally {
+      signal.removeEventListener('abort', abortConn)
+      if (typeof document !== 'undefined')
+        document.removeEventListener('visibilitychange', onVisible)
+      if (typeof window !== 'undefined')
+        window.removeEventListener('online', abortConn)
+    }
+
+    if (signal.aborted) return
+    await reconnectDelay(isVisible() ? 0 : backoff, signal)
+    backoff = Math.min(backoff * 2, MAX_BACKOFF_MS)
   }
 }
 
