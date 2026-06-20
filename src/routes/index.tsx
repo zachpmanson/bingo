@@ -14,11 +14,17 @@ export default function BoardListPage() {
   return (
     <div>
       <h1>All Boards</h1>
-      <Button to="/board/new">Create New Board</Button>
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-3 p-2">
+        <Button to="/board/new" className="w-full">
+          Create New Board
+        </Button>
         {boards && boards.length > 0 ? (
           boards.map((board) => (
-            <Button to="/board/$uuid" params={{ uuid: board.id }}>
+            <Button
+              to="/board/$uuid"
+              params={{ uuid: board.id }}
+              className="w-full"
+            >
               <strong>{board.name}</strong> (size: {board.size}) ({board.id})
             </Button>
           ))
