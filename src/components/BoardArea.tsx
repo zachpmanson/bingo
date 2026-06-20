@@ -17,7 +17,7 @@ export default function BoardArea({ uuid }: { uuid: string }) {
     void share(key, `${window.location.origin}${path}`, { title })
 
   return (
-    <div className="py-4 flex flex-col gap-4">
+    <div className="py-4 flex flex-col gap-4 items-center">
       <div className="flex w-full justify-center">
         <span
           className="border-solid p-2 text-2xl"

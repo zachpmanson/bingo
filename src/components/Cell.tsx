@@ -128,7 +128,7 @@ export function BoardWrapper({
 }) {
   return (
     <div
-      className="grid gap-0.5 bg-black p-0.5"
+      className="grid gap-0.5 bg-black p-0.5 w-full max-w-[70ch]"
       style={{
         // gridTemplateRows: 'auto auto 1fr 1fr 1fr auto auto',
         gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))`,

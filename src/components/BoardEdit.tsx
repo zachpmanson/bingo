@@ -10,7 +10,10 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
     initialBoard
       ? {
           ...initialBoard,
-          cells: initialBoard.cells.map((c) => ({ text: c.text, checked: false })),
+          cells: initialBoard.cells.map((c) => ({
+            text: c.text,
+            checked: false,
+          })),
         }
       : {
           id: '',
@@ -22,7 +25,7 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
   )
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-4 p-4 justify-center items-center">
       <input
         className="border border-black border-solid p-2 text-2xl"
         style={{
