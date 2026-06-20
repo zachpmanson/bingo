@@ -26,7 +26,7 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
       <input
         className="border border-black border-solid p-2 text-2xl"
         style={{
-          fontFamily: 'Impact, serif',
+          fontFamily: "'Anton', Impact, sans-serif",
         }}
         type="text"
         placeholder="Title.."

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { boardsCollection } from '#/db-collections'
 import { useBoards } from '#/hooks/useBoard.ts'
 import { useClipboard } from '#/hooks/useClipboard.ts'
@@ -8,6 +9,10 @@ export default function BoardArea({ uuid }: { uuid: string }) {
   const board = useBoards(uuid)
   const { share, copiedKey } = useClipboard()
 
+  useEffect(() => {
+    if (board?.name) document.title = board.name
+  }, [board?.name])
+
   const shareLink = (key: string, path: string, title: string) =>
     void share(key, `${window.location.origin}${path}`, { title })
 
@@ -17,7 +22,7 @@ export default function BoardArea({ uuid }: { uuid: string }) {
         <span
           className="border-solid p-2 text-2xl"
           style={{
-            fontFamily: 'Impact, serif',
+            fontFamily: "'Anton', Impact, sans-serif",
           }}
         >
           {board?.name ?? 'Loading...'}
