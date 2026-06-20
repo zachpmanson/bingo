@@ -9,5 +9,7 @@
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system: {
       packages.default = nixpkgs.legacyPackages.${system}.callPackage ./nix/package.nix {};
-    });
+    }) // {
+      nixosModules.default = import ./nix/module.nix self;
+    };
 }
