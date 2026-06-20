@@ -6,7 +6,7 @@ let
     version = "0.0.0";
     src = ../.;
     fetcherVersion = 3;
-    hash = pkgs.lib.fakeHash; # replace with the real hash from the first build error
+    hash = "sha256-ZZ0KdKUDbqYyi+OYd1OaBV362WP9+zfwXodps+nW384=";
   };
 in
 
