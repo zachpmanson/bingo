@@ -1,8 +1,6 @@
 import { Link } from '@tanstack/react-router'
 
 export default function Footer() {
-  const year = new Date().getFullYear()
-
   return (
     <footer className="border-t border-[var(--line)] bg-[var(--header-bg)] px-4 backdrop-blur-lg">
       <nav className="page-wrap flex flex-wrap items-center gap-x-3 gap-y-2 py-3 sm:py-4">

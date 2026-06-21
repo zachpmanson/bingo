@@ -24,6 +24,9 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
         },
   )
 
+  const trimmedName = board.name.trim()
+  const hasName = trimmedName.length > 0
+
   return (
     <div className="flex flex-col gap-4 p-4 justify-center items-center">
       <input
@@ -36,6 +39,9 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
         value={board.name}
         onChange={(e) => setBoard({ ...board, name: e.target.value })}
       />
+      {!hasName && (
+        <p className="text-sm text-red-600">Give your board a name to create it.</p>
+      )}
       <div className="flex w-full justify-between ">
         <input
           type="number"
@@ -51,9 +57,12 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
           }}
         />
         <Button
+          disabled={!hasName}
           onClick={() => {
+            if (!hasName) return
             const newBoard: Board = {
               ...board,
+              name: trimmedName,
               id: crypto.randomUUID(),
               sharingId: crypto.randomUUID(),
             }
