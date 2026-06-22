@@ -15,7 +15,7 @@ export const Route = createFileRoute('/board/list')({
   }),
 })
 
-export default function BoardListPage() {
+function BoardListPage() {
   const boards = useAllBoards()
 
   return (

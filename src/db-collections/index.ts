@@ -73,8 +73,17 @@ const applyBatch = (
   try {
     begin()
     for (const m of envelopes) {
-      if (m.type === 'delete') write({ type: 'delete', key: m.key })
-      else write({ type: m.type, value: m.value })
+      if (m.type === 'delete') {
+        write({ type: 'delete', key: m.key })
+      } else {
+        // The server resends a full snapshot of `insert` envelopes on every
+        // (re)connection — reconnect, leader handoff, follower snapshot — so a
+        // board we already hold arrives as an `insert`. Derive the op from local
+        // state instead of trusting the envelope label; otherwise tanstack-db
+        // rejects the duplicate key whenever the value changed while we were away.
+        const type = boardsCollection.has(m.value.id) ? 'update' : 'insert'
+        write({ type, value: m.value })
+      }
     }
     commit()
   } catch (e) {
