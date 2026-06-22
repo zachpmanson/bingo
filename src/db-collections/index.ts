@@ -367,6 +367,14 @@ export const boardsCollection = createCollection({
   sync: {
     rowUpdateMode: 'full',
     sync: (cb) => {
+      // Browser-only. This sync streams from /board/live-api over fetch and
+      // coordinates tabs via BroadcastChannel/Web Locks; none of that belongs
+      // on the server. If it starts during SSR the server fetches its own
+      // never-ending stream endpoint and the request handler deadlocks.
+      if (typeof window === 'undefined') {
+        cb.markReady()
+        return () => {}
+      }
       const supported =
         typeof BroadcastChannel !== 'undefined' &&
         typeof navigator !== 'undefined' &&
