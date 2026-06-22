@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-import BoardEdit from '#/components/BoardEdit.tsx'
-import { useBoards } from '#/hooks/useBoard.ts'
+import BoardOwnerView from '#/components/BoardOwnerView.tsx'
 import { seo } from '#/lib/seo'
 
 export const Route = createFileRoute('/board/$uuid_/edit')({
@@ -9,23 +8,18 @@ export const Route = createFileRoute('/board/$uuid_/edit')({
   ssr: false,
   head: () => ({
     meta: seo({
-      title: 'Edit Board',
-      description: 'Edit your custom bingo board.',
+      title: 'Manage Board',
+      description: 'Manage and share your bingo board.',
     }),
   }),
 })
 
 function App() {
   const { uuid } = Route.useParams()
-  const board = useBoards(uuid)
 
   return (
-    <div className="flex flex-col h-screen bg-white">
-      {board ? (
-        <BoardEdit initialBoard={board} />
-      ) : (
-        <div className="p-4">Loading...</div>
-      )}
+    <div className="flex flex-col h-screen bg-gray-50">
+      <BoardOwnerView uuid={uuid} />
     </div>
   )
 }

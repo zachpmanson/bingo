@@ -33,8 +33,9 @@ function AllBoardsPage() {
               params={{ uuid: board.id }}
               className="w-full"
             >
-              <strong>{board.name}</strong> ({board.size}x{board.size})
-              {board.childIndex ? `(#${board.childIndex})` : ''}
+              <strong>{board.name}</strong>{' '}
+              {board.childIndex ? `#${board.childIndex}` : ''} ({board.kind},{' '}
+              {board.size}x{board.size}, {board.id})
             </Button>
           ))
         ) : (

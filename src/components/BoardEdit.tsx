@@ -101,7 +101,7 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
         draft.size = board.size
         draft.cells = cells
       })
-      navigate({ to: '/board/$uuid/owner', params: { uuid: initialBoard!.id } })
+      navigate({ to: '/board/$uuid/edit', params: { uuid: initialBoard!.id } })
       return
     }
 
@@ -118,7 +118,7 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
     }
     boardsCollection.insert(newBoard)
     if (newBoard.kind === 'shuffled') {
-      navigate({ to: '/board/$uuid/owner', params: { uuid: newBoard.id } })
+      navigate({ to: '/board/$uuid/edit', params: { uuid: newBoard.id } })
     } else {
       navigate({ to: '/board/$uuid', params: { uuid: newBoard.id } })
     }

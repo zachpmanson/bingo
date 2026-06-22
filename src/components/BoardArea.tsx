@@ -17,7 +17,7 @@ export default function BoardArea({ uuid }: { uuid: string }) {
   // owner to its management view instead.
   useEffect(() => {
     if (board?.kind === 'shuffled') {
-      navigate({ to: '/board/$uuid/owner', params: { uuid }, replace: true })
+      navigate({ to: '/board/$uuid/edit', params: { uuid }, replace: true })
     }
   }, [board?.kind, navigate, uuid])
 
@@ -114,7 +114,7 @@ export default function BoardArea({ uuid }: { uuid: string }) {
           >
             {copiedKey === 'copy' ? 'Copied!' : 'Share a Copy'}
           </Button>
-          <Button to={'/board/$uuid/edit'} params={{ uuid: board.id }}>
+          <Button to={'/board/$uuid/fork'} params={{ uuid: board.id }}>
             Create a Fork
           </Button>
         </div>

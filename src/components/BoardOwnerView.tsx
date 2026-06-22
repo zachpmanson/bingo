@@ -48,7 +48,7 @@ export default function BoardOwnerView({ uuid }: { uuid: string }) {
         >
           {copiedKey === 'copy' ? 'Copied!' : 'Copy Random Link'}
         </Button>
-        <Button to={'/board/$uuid/edit'} params={{ uuid: board.id }}>
+        <Button to={'/board/$uuid/fork'} params={{ uuid: board.id }}>
           Edit
         </Button>
       </div>
