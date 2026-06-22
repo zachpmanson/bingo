@@ -31,6 +31,11 @@ export default function BoardOwnerView({ uuid }: { uuid: string }) {
         {board.name}
       </span>
       <p className="text-sm text-gray-600">{summary}</p>
+      <p className="text-sm text-gray-600">
+        {board.childCount === 0
+          ? 'No boards generated yet'
+          : `${board.childCount} board${board.childCount === 1 ? '' : 's'} generated`}
+      </p>
       <div className="flex justify-center gap-2">
         <Button
           onClick={() =>

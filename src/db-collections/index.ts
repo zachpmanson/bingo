@@ -36,6 +36,12 @@ export const BoardSchema = z.object({
   // generates a random size² subset. Defaults to 'fixed' so pre-existing
   // persisted boards (without this field) load unchanged.
   kind: z.enum(['fixed', 'shuffled']).default('fixed'),
+  // How many boards have been generated from this one via its share link
+  // (copies of a fixed board, random draws of a shuffled board).
+  childCount: z.number().default(0),
+  // For a generated board: which child of its source it is, 1-based. Absent on
+  // boards created directly from the editor.
+  childIndex: z.number().optional(),
   cells: z.array(CellSchema),
 })
 

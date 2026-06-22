@@ -33,8 +33,8 @@ export default function AllBoardsPage() {
               params={{ uuid: board.id }}
               className="w-full"
             >
-              <strong>{board.name}</strong> ({board.size}x{board.size}) (
-              {board.id})
+              <strong>{board.name}</strong> ({board.size}x{board.size})
+              {board.childIndex ? `(#${board.childIndex})` : ''}
             </Button>
           ))
         ) : (

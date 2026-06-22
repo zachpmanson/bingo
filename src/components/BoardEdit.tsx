@@ -23,6 +23,7 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
           sharingId: '',
           name: '',
           kind: 'fixed',
+          childCount: 0,
           cells: Array.from({ length: 25 }, () => ({
             text: 'TO DO',
             checked: false,
@@ -86,11 +87,15 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
 
   const create = () => {
     if (!canCreate) return
+    // A created (or edit-forked) board is a fresh source: it has no parent and
+    // no children yet.
+    const { childIndex: _childIndex, ...rest } = board
     const newBoard: Board = {
-      ...board,
+      ...rest,
       name: trimmedName,
       id: crypto.randomUUID(),
       sharingId: crypto.randomUUID(),
+      childCount: 0,
       cells: board.cells.map((c) => ({ text: c.text, checked: false })),
     }
     boardsCollection.insert(newBoard)

@@ -64,7 +64,7 @@ export default function BoardArea({ uuid }: { uuid: string }) {
   return (
     <div className="py-4 flex flex-col gap-4 items-center">
       <Confetti burst={burst} />
-      <div className="flex w-full justify-center">
+      <div className="flex w-full flex-col items-center">
         <span
           className="border-solid p-2 text-2xl"
           style={{
@@ -73,6 +73,9 @@ export default function BoardArea({ uuid }: { uuid: string }) {
         >
           {board?.name ?? 'Loading...'}
         </span>
+        {board?.childIndex !== undefined && (
+          <span className="text-sm text-gray-600">#{board.childIndex}</span>
+        )}
       </div>
       <BoardWrapper ref={boardRef} size={board?.size ?? 5}>
         {board?.cells.map((cell, index) => (
@@ -98,7 +101,7 @@ export default function BoardArea({ uuid }: { uuid: string }) {
               )
             }
           >
-            {copiedKey === 'live' ? 'Copied!' : 'Share live link'}
+            {copiedKey === 'live' ? 'Copied!' : 'Share a Live Link'}
           </Button>
           <Button
             onClick={() =>
@@ -109,10 +112,10 @@ export default function BoardArea({ uuid }: { uuid: string }) {
               )
             }
           >
-            {copiedKey === 'copy' ? 'Copied!' : 'Share a copy'}
+            {copiedKey === 'copy' ? 'Copied!' : 'Share a Copy'}
           </Button>
           <Button to={'/board/$uuid/edit'} params={{ uuid: board.id }}>
-            Edit
+            Create a Fork
           </Button>
         </div>
       )}
