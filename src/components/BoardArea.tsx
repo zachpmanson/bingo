@@ -1,13 +1,48 @@
 import { boardsCollection } from '#/db-collections'
 import { useBoards } from '#/hooks/useBoard.ts'
 import { useClipboard } from '#/hooks/useClipboard.ts'
-import { useEffect } from 'react'
+import { getCompletedLines, lineToSource } from '#/lib/bingo.ts'
+import { useEffect, useRef, useState } from 'react'
 import Button from './Button'
 import { BoardWrapper, Cell } from './Cell'
+import Confetti, { type Burst } from './Confetti'
 
 export default function BoardArea({ uuid }: { uuid: string }) {
   const board = useBoards(uuid)
   const { share, copiedKey } = useClipboard()
+
+  // Celebrate whenever the user checks a cell that completes a new line —
+  // confetti pops from the on-screen position of that line. We fire on the
+  // explicit check action (not reactively on board state) so the optimistic
+  // update / sync round-trip can't replay a stale "complete" state and trigger
+  // a false burst. Deselecting a cell never celebrates.
+  const boardRef = useRef<HTMLDivElement>(null)
+  const [burst, setBurst] = useState<Burst | null>(null)
+
+  const toggleCell = (index: number, wasChecked: boolean) => {
+    boardsCollection.update(uuid, (draft) => {
+      draft.cells[index].checked = !wasChecked
+    })
+    if (wasChecked || !board || !boardRef.current) return
+
+    const before = new Set(
+      getCompletedLines(board.cells, board.size).map((l) => l.key),
+    )
+    const nextCells = board.cells.map((c, i) =>
+      i === index ? { ...c, checked: true } : c,
+    )
+    const newLine = getCompletedLines(nextCells, board.size).find(
+      (l) => !before.has(l.key),
+    )
+    if (newLine) {
+      const source = lineToSource(
+        newLine,
+        board.size,
+        boardRef.current.getBoundingClientRect(),
+      )
+      setBurst((prev) => ({ key: (prev?.key ?? 0) + 1, source }))
+    }
+  }
 
   useEffect(() => {
     if (board?.name) document.title = board.name
@@ -18,6 +53,7 @@ export default function BoardArea({ uuid }: { uuid: string }) {
 
   return (
     <div className="py-4 flex flex-col gap-4 items-center">
+      <Confetti burst={burst} />
       <div className="flex w-full justify-center">
         <span
           className="border-solid p-2 text-2xl"
@@ -28,7 +64,7 @@ export default function BoardArea({ uuid }: { uuid: string }) {
           {board?.name ?? 'Loading...'}
         </span>
       </div>
-      <BoardWrapper size={board?.size ?? 5}>
+      <BoardWrapper ref={boardRef} size={board?.size ?? 5}>
         {board?.cells.map((cell, index) => (
           <Cell
             key={index}
@@ -37,11 +73,7 @@ export default function BoardArea({ uuid }: { uuid: string }) {
             onChange={() => {}}
             canEdit={false}
             isChecked={cell.checked}
-            onClick={() =>
-              boardsCollection.update(uuid, (draft) => {
-                draft.cells[index].checked = !cell.checked
-              })
-            }
+            onClick={() => toggleCell(index, cell.checked)}
           />
         ))}
       </BoardWrapper>

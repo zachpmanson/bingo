@@ -122,12 +122,15 @@ export function Cell({
 export function BoardWrapper({
   size,
   children,
+  ref,
 }: {
   size: number
   children: React.ReactNode
+  ref?: React.Ref<HTMLDivElement>
 }) {
   return (
     <div
+      ref={ref}
       className="grid gap-0.5 bg-black p-0.5 w-full max-w-[70ch]"
       style={{
         // gridTemplateRows: 'auto auto 1fr 1fr 1fr auto auto',

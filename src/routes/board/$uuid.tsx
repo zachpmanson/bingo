@@ -2,8 +2,8 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useEffect } from 'react'
 
 import BoardArea from '#/components/BoardArea.tsx'
-import { seo } from '#/lib/seo'
 import { recordOpenedBoard } from '#/hooks/useOpenedBoards.ts'
+import { seo } from '#/lib/seo'
 
 export const Route = createFileRoute('/board/$uuid')({
   component: App,
