@@ -85,10 +85,28 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
       cells: prev.cells.filter((_, i) => i !== index),
     }))
 
-  const create = () => {
+  const isEditing = Boolean(initialBoard?.id)
+
+  const save = () => {
     if (!canCreate) return
-    // A created (or edit-forked) board is a fresh source: it has no parent and
-    // no children yet.
+    const cells = board.cells.map((c) => ({ text: c.text, checked: false }))
+
+    if (isEditing) {
+      // Edit in place: the owner is changing this board's own content, so keep
+      // its id/sharingId (existing share links stay valid) and update the
+      // record rather than forking a fresh copy.
+      boardsCollection.update(initialBoard!.id, (draft) => {
+        draft.name = trimmedName
+        draft.kind = board.kind
+        draft.size = board.size
+        draft.cells = cells
+      })
+      navigate({ to: '/board/$uuid/owner', params: { uuid: initialBoard!.id } })
+      return
+    }
+
+    // A newly created board is a fresh source: it has no parent and no children
+    // yet.
     const { childIndex: _childIndex, ...rest } = board
     const newBoard: Board = {
       ...rest,
@@ -96,7 +114,7 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
       id: crypto.randomUUID(),
       sharingId: crypto.randomUUID(),
       childCount: 0,
-      cells: board.cells.map((c) => ({ text: c.text, checked: false })),
+      cells,
     }
     boardsCollection.insert(newBoard)
     if (newBoard.kind === 'shuffled') {
@@ -136,8 +154,8 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
                 onChange={(e) => setSize(Number(e.target.value))}
               />
             </label>
-            <Button disabled={!canCreate} onClick={create}>
-              Create Board
+            <Button disabled={!canCreate} onClick={save}>
+              {isEditing ? 'Save' : 'Create Board'}
             </Button>
           </div>
           <fieldset className="flex gap-4">

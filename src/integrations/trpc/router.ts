@@ -32,6 +32,15 @@ const boardsRouter = {
       serverBoardsCollection.insert(input)
       return input
     }),
+  update: publicProcedure
+    .input(BoardSchema)
+    .output(BoardSchema)
+    .mutation(({ input }) => {
+      serverBoardsCollection.update(input.id, (draft) => {
+        Object.assign(draft, input)
+      })
+      return input
+    }),
   setCell: publicProcedure
     .input(
       z.object({

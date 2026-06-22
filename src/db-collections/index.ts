@@ -389,15 +389,34 @@ export const boardsCollection = createCollection({
   },
   onUpdate: async ({ transaction }) => {
     for (const m of transaction.mutations) {
-      m.modified.cells.forEach((cell, i) => {
-        if (cell.checked !== m.original.cells[i].checked) {
-          trpcClient.boards.setCell.mutate({
-            boardId: m.modified.id,
-            cellId: i,
-            checked: cell.checked,
-          })
-        }
-      })
+      // A play-time checkbox toggle changes only `cells[i].checked`; an owner
+      // edit changes board content (name/size/kind/cell text/the cell array).
+      // Detect content edits and persist the whole board; otherwise stream the
+      // individual cell toggles as before.
+      const sameStructure =
+        m.modified.name === m.original.name &&
+        m.modified.size === m.original.size &&
+        m.modified.kind === m.original.kind &&
+        m.modified.cells.length === m.original.cells.length
+      const onlyCheckedChanged =
+        sameStructure &&
+        m.modified.cells.every(
+          (cell, i) => cell.text === m.original.cells[i].text,
+        )
+
+      if (onlyCheckedChanged) {
+        m.modified.cells.forEach((cell, i) => {
+          if (cell.checked !== m.original.cells[i].checked) {
+            trpcClient.boards.setCell.mutate({
+              boardId: m.modified.id,
+              cellId: i,
+              checked: cell.checked,
+            })
+          }
+        })
+      } else {
+        await trpcClient.boards.update.mutate(m.modified)
+      }
     }
   },
 })
