@@ -31,6 +31,11 @@ export const BoardSchema = z.object({
   sharingId: z.uuidv4(),
   name: z.string(),
   size: z.number(),
+  // 'fixed': cells are a locked size×size grid (the original board kind).
+  // 'shuffled': cells are an item pool of >= size² entries; each share link
+  // generates a random size² subset. Defaults to 'fixed' so pre-existing
+  // persisted boards (without this field) load unchanged.
+  kind: z.enum(['fixed', 'shuffled']).default('fixed'),
   cells: z.array(CellSchema),
 })
 

@@ -2,6 +2,7 @@ import { boardsCollection } from '#/db-collections'
 import { useBoards } from '#/hooks/useBoard.ts'
 import { useClipboard } from '#/hooks/useClipboard.ts'
 import { getCompletedLines, lineToSource } from '#/lib/bingo.ts'
+import { useNavigate } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
 import Button from './Button'
 import { BoardWrapper, Cell } from './Cell'
@@ -10,6 +11,15 @@ import Confetti, { type Burst } from './Confetti'
 export default function BoardArea({ uuid }: { uuid: string }) {
   const board = useBoards(uuid)
   const { share, copiedKey } = useClipboard()
+  const navigate = useNavigate()
+
+  // A shuffled board is an item-pool template, not a playable grid — send the
+  // owner to its management view instead.
+  useEffect(() => {
+    if (board?.kind === 'shuffled') {
+      navigate({ to: '/board/$uuid/owner', params: { uuid }, replace: true })
+    }
+  }, [board?.kind, navigate, uuid])
 
   // Celebrate whenever the user checks a cell that completes a new line —
   // confetti pops from the on-screen position of that line. We fire on the

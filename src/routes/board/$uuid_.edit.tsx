@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import BoardEdit from '#/components/BoardEdit.tsx'
-import { seo } from '#/lib/seo'
 import { useBoards } from '#/hooks/useBoard.ts'
+import { seo } from '#/lib/seo'
 
 export const Route = createFileRoute('/board/$uuid_/edit')({
   component: App,

@@ -39,6 +39,23 @@ export function getCompletedLines(cells: Cell[], size: number): CompletedLine[] 
   return lines
 }
 
+// Builds a fresh size×size grid by taking a random subset of `pool` placed in
+// random positions (Fisher–Yates). Used server-side to generate a playable
+// board from a shuffled board's item pool, so `Math.random()` is fine here. If
+// the pool is somehow smaller than size², the remainder is padded with blanks.
+export function randomBoardCells(pool: Cell[], size: number): Cell[] {
+  const count = size * size
+  const shuffled = pool.slice()
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  return Array.from({ length: count }, (_, i) => ({
+    text: shuffled[i]?.text ?? '',
+    checked: false,
+  }))
+}
+
 type Rect = { left: number; top: number; width: number; height: number }
 export type ConfettiSource = { x: number; y: number; w: number; h: number }
 

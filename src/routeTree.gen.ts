@@ -17,6 +17,7 @@ import { Route as BoardNewRouteImport } from './routes/board/new'
 import { Route as BoardLiveApiRouteImport } from './routes/board/live-api'
 import { Route as BoardListRouteImport } from './routes/board/list'
 import { Route as BoardUuidRouteImport } from './routes/board/$uuid'
+import { Route as BoardUuidOwnerRouteImport } from './routes/board/$uuid_.owner'
 import { Route as BoardUuidEditRouteImport } from './routes/board/$uuid_.edit'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api.trpc.$'
 
@@ -60,6 +61,11 @@ const BoardUuidRoute = BoardUuidRouteImport.update({
   path: '/board/$uuid',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BoardUuidOwnerRoute = BoardUuidOwnerRouteImport.update({
+  id: '/board/$uuid_/owner',
+  path: '/board/$uuid/owner',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BoardUuidEditRoute = BoardUuidEditRouteImport.update({
   id: '/board/$uuid_/edit',
   path: '/board/$uuid/edit',
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/board/': typeof BoardIndexRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/board/$uuid/edit': typeof BoardUuidEditRoute
+  '/board/$uuid/owner': typeof BoardUuidOwnerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/board': typeof BoardIndexRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/board/$uuid/edit': typeof BoardUuidEditRoute
+  '/board/$uuid/owner': typeof BoardUuidOwnerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   '/board/': typeof BoardIndexRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/board/$uuid_/edit': typeof BoardUuidEditRoute
+  '/board/$uuid_/owner': typeof BoardUuidOwnerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
     | '/board/'
     | '/api/trpc/$'
     | '/board/$uuid/edit'
+    | '/board/$uuid/owner'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -133,6 +143,7 @@ export interface FileRouteTypes {
     | '/board'
     | '/api/trpc/$'
     | '/board/$uuid/edit'
+    | '/board/$uuid/owner'
   id:
     | '__root__'
     | '/'
@@ -145,6 +156,7 @@ export interface FileRouteTypes {
     | '/board/'
     | '/api/trpc/$'
     | '/board/$uuid_/edit'
+    | '/board/$uuid_/owner'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -158,6 +170,7 @@ export interface RootRouteChildren {
   BoardIndexRoute: typeof BoardIndexRoute
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
   BoardUuidEditRoute: typeof BoardUuidEditRoute
+  BoardUuidOwnerRoute: typeof BoardUuidOwnerRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -218,6 +231,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BoardUuidRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/board/$uuid_/owner': {
+      id: '/board/$uuid_/owner'
+      path: '/board/$uuid/owner'
+      fullPath: '/board/$uuid/owner'
+      preLoaderRoute: typeof BoardUuidOwnerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/board/$uuid_/edit': {
       id: '/board/$uuid_/edit'
       path: '/board/$uuid/edit'
@@ -246,6 +266,7 @@ const rootRouteChildren: RootRouteChildren = {
   BoardIndexRoute: BoardIndexRoute,
   ApiTrpcSplatRoute: ApiTrpcSplatRoute,
   BoardUuidEditRoute: BoardUuidEditRoute,
+  BoardUuidOwnerRoute: BoardUuidOwnerRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
