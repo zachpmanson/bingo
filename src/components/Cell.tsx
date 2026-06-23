@@ -108,10 +108,12 @@ export function Cell({
       <div
         className="relative z-10 text-center w-full outline-none"
         contentEditable={canEdit}
-        data-placeholder={canEdit ? 'TO DO' : undefined}
+        data-placeholder={canEdit ? 'TBC' : undefined}
         ref={ref}
         onInput={(e) => {
-          onChange?.(e.currentTarget.textContent ?? '')
+          const text = e.currentTarget.textContent ?? ''
+          if (!text) e.currentTarget.innerHTML = ''
+          onChange?.(text)
           fitText()
         }}
         suppressContentEditableWarning
