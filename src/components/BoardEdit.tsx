@@ -8,6 +8,7 @@ const emptyCell = (): Cell => ({ text: '', checked: false })
 
 export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
   const navigate = useNavigate()
+  const [newItemText, setNewItemText] = useState('')
   const [board, setBoard] = useState<Board>(
     initialBoard
       ? {
@@ -24,10 +25,7 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
           name: '',
           kind: 'fixed',
           childCount: 0,
-          cells: Array.from({ length: 25 }, () => ({
-            text: 'TO DO',
-            checked: false,
-          })),
+          cells: Array.from({ length: 25 }, emptyCell),
           size: 5,
         },
   )
@@ -36,7 +34,10 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
   const hasName = trimmedName.length > 0
   const isShuffled = board.kind === 'shuffled'
   const needed = board.size * board.size
-  const hasEnoughItems = board.cells.length >= needed
+  const filledCount =
+    board.cells.filter((c) => c.text.trim() !== '').length +
+    (newItemText.trim() ? 1 : 0)
+  const hasEnoughItems = filledCount >= needed
   const canCreate = hasName && (!isShuffled || hasEnoughItems)
 
   // Switching kind keeps the texts the user already typed: going to fixed
@@ -76,9 +77,6 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
       return { ...prev, cells }
     })
 
-  const addItem = () =>
-    setBoard((prev) => ({ ...prev, cells: [...prev.cells, emptyCell()] }))
-
   const removeItem = (index: number) =>
     setBoard((prev) => ({
       ...prev,
@@ -89,7 +87,11 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
 
   const save = () => {
     if (!canCreate) return
-    const cells = board.cells.map((c) => ({ text: c.text, checked: false }))
+    const existingCells = board.cells.filter((c) => c.text.trim() !== '')
+    const allCells = newItemText.trim()
+      ? [...existingCells, { text: newItemText.trim(), checked: false as const }]
+      : existingCells
+    const cells = allCells.map((c) => ({ text: c.text, checked: false }))
 
     if (isEditing) {
       // Edit in place: the owner is changing this board's own content, so keep
@@ -184,22 +186,43 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
           <div className="flex flex-col gap-2 w-full">
             <p className="text-sm text-gray-600">
               {hasEnoughItems
-                ? `${board.size}×${board.size} → ${board.cells.length}+ items (each link draws a random ${needed}) `
-                : `Add at least ${needed} items (${needed - board.cells.length} more needed).`}
+                ? `${board.size}×${board.size} → ${filledCount}+ items (each link draws a random ${needed}) `
+                : `Add at least ${needed} items (${needed - filledCount} more needed).`}
             </p>
-            {board.cells.map((cell, index) => (
-              <div key={index} className="flex gap-2 items-center">
-                <input
-                  className="border border-black border-solid p-2 flex-1"
-                  type="text"
-                  placeholder={`Item ${index + 1}`}
-                  value={cell.text}
-                  onChange={(e) => setCellText(index, e.target.value)}
-                />
-                <Button onClick={() => removeItem(index)}>✕</Button>
-              </div>
-            ))}
-            <Button onClick={addItem}>Add item</Button>
+            <input
+              className="border border-black border-solid p-2 flex-1"
+              type="text"
+              placeholder="New item..."
+              value={newItemText}
+              onChange={(e) => setNewItemText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && newItemText.trim()) {
+                  setBoard((prev) => ({
+                    ...prev,
+                    cells: [
+                      ...prev.cells,
+                      { text: newItemText.trim(), checked: false },
+                    ],
+                  }))
+                  setNewItemText('')
+                }
+              }}
+            />
+            {[...board.cells].reverse().map((cell, reversedIndex) => {
+              const originalIndex = board.cells.length - 1 - reversedIndex
+              return (
+                <div key={originalIndex} className="flex gap-2 items-center">
+                  <input
+                    className="border border-black border-solid p-2 flex-1"
+                    type="text"
+                    placeholder={`Item ${originalIndex + 1}`}
+                    value={cell.text}
+                    onChange={(e) => setCellText(originalIndex, e.target.value)}
+                  />
+                  <Button onClick={() => removeItem(originalIndex)}>✕</Button>
+                </div>
+              )
+            })}
           </div>
         ) : (
           <BoardWrapper size={board.size}>

@@ -108,6 +108,7 @@ export function Cell({
       <div
         className="relative z-10 text-center w-full outline-none"
         contentEditable={canEdit}
+        data-placeholder={canEdit ? 'TO DO' : undefined}
         ref={ref}
         onInput={(e) => {
           onChange?.(e.currentTarget.textContent ?? '')
