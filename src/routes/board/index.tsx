@@ -1,7 +1,7 @@
 import Button from '#/components/Button.tsx'
 import { useAllBoards } from '#/hooks/useBoard.ts'
 import { seo } from '#/lib/seo'
-import { hasItems } from '#/lib/utils.ts'
+import { hasItems, suffix } from '#/lib/utils.ts'
 
 import { createFileRoute } from '@tanstack/react-router'
 
@@ -33,9 +33,7 @@ function AllBoardsPage() {
               params={{ uuid: board.id }}
               className="w-full"
             >
-              <strong>{board.name}</strong>{' '}
-              {board.childIndex ? `#${board.childIndex}` : ''} ({board.kind},{' '}
-              {board.size}x{board.size}, {board.id})
+              <strong>{board.name}</strong> {suffix(board)} ({board.id})
             </Button>
           ))
         ) : (

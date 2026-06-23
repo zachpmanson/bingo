@@ -2,7 +2,7 @@ import Button from '#/components/Button.tsx'
 import { useAllBoards } from '#/hooks/useBoard.ts'
 import { useOpenedBoardIds } from '#/hooks/useOpenedBoards.ts'
 import { seo } from '#/lib/seo'
-import { hasItems } from '#/lib/utils.ts'
+import { hasItems, suffix } from '#/lib/utils.ts'
 
 import { createFileRoute } from '@tanstack/react-router'
 
@@ -41,7 +41,7 @@ export default function HomePage() {
               params={{ uuid: board.id }}
               className="w-full"
             >
-              <strong>{board.name}</strong> ({board.size}x{board.size})
+              <strong>{board.name}</strong> {suffix(board)}
             </Button>
           ))
         ) : (
