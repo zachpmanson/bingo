@@ -16,7 +16,7 @@ export function suffix(b: Board) {
     return `#${b.childIndex} (${b.size}x${b.size})`
   }
   if (b.kind === 'shuffled') {
-    return `Template (${b.size}x${b.size})`
+    return `Template (${b.cells.length} options)`
   }
   return `(${b.size}x${b.size})`
 }
