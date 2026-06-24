@@ -53,9 +53,9 @@ export default function BoardOwnerView({ uuid }: { uuid: string }) {
         </Button>
       </div>
       <ul className="flex flex-col gap-1 w-full max-w-[70ch]">
-        {board.cells.map((cell, index) => (
+        {[...board.cells].reverse().map((cell, reversedIndex) => (
           <li
-            key={index}
+            key={board.cells.length - 1 - reversedIndex}
             className="border border-black border-solid p-2 bg-white"
           >
             {cell.text || <span className="text-gray-400">(empty)</span>}
