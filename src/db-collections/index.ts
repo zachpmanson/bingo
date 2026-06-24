@@ -42,6 +42,9 @@ export const BoardSchema = z.object({
   // For a generated board: which child of its source it is, 1-based. Absent on
   // boards created directly from the editor.
   childIndex: z.number().optional(),
+  // The id of the board this was generated from. Absent on boards created
+  // directly from the editor.
+  parentId: z.uuidv4().optional(),
   cells: z.array(CellSchema),
 })
 

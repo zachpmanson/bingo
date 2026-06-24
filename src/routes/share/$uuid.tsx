@@ -34,6 +34,7 @@ export const Route = createFileRoute('/share/$uuid')({
           sharingId: crypto.randomUUID(),
           childCount: 0,
           childIndex,
+          parentId: source.id,
           cells,
         }
         serverBoardsCollection.insert(copy)
