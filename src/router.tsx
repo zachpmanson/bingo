@@ -1,14 +1,14 @@
-import { createRouter as createTanStackRouter } from '@tanstack/react-router'
-import { routeTree } from './routeTree.gen'
+import { createRouter as createTanStackRouter } from '@tanstack/react-router';
+import { routeTree } from './routeTree.gen';
 
-import type { ReactNode } from 'react'
-import { setupRouterSsrQueryIntegration } from '@tanstack/react-router-ssr-query'
+import type { ReactNode } from 'react';
+import { setupRouterSsrQueryIntegration } from '@tanstack/react-router-ssr-query';
 import TanstackQueryProvider, {
   getContext,
-} from './integrations/tanstack-query/root-provider'
+} from './integrations/tanstack-query/root-provider';
 
 export function getRouter() {
-  const context = getContext()
+  const context = getContext();
 
   const router = createTanStackRouter({
     routeTree,
@@ -22,17 +22,17 @@ export function getRouter() {
         <TanstackQueryProvider context={context}>
           {props.children}
         </TanstackQueryProvider>
-      )
+      );
     },
-  })
+  });
 
-  setupRouterSsrQueryIntegration({ router, queryClient: context.queryClient })
+  setupRouterSsrQueryIntegration({ router, queryClient: context.queryClient });
 
-  return router
+  return router;
 }
 
 declare module '@tanstack/react-router' {
   interface Register {
-    router: ReturnType<typeof getRouter>
+    router: ReturnType<typeof getRouter>;
   }
 }

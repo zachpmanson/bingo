@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useLayoutEffect, useRef } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 
-const MAX_FONT_PX = 40
-const MIN_FONT_PX = 8
+const MAX_FONT_PX = 40;
+const MIN_FONT_PX = 8;
 
 // CellEditor component for contentEditable with ref
 export function Cell({
@@ -12,68 +12,68 @@ export function Cell({
   index,
   onClick,
 }: {
-  index: number
-  value: string
-  onChange?: (text: string) => void
-  isChecked?: boolean
-  canEdit: boolean
-  onClick?: () => void
+  index: number;
+  value: string;
+  onChange?: (text: string) => void;
+  isChecked?: boolean;
+  canEdit: boolean;
+  onClick?: () => void;
 }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const cellRef = useRef<HTMLDivElement>(null)
+  const ref = useRef<HTMLDivElement>(null);
+  const cellRef = useRef<HTMLDivElement>(null);
 
   // Shrink the font size until the text fits within the (square) cell.
   const fitText = useCallback(() => {
-    const cell = cellRef.current
-    const text = ref.current
-    if (!cell || !text) return
+    const cell = cellRef.current;
+    const text = ref.current;
+    if (!cell || !text) return;
 
-    const styles = getComputedStyle(cell)
+    const styles = getComputedStyle(cell);
     const padX =
-      parseFloat(styles.paddingLeft) + parseFloat(styles.paddingRight)
+      parseFloat(styles.paddingLeft) + parseFloat(styles.paddingRight);
     const padY =
-      parseFloat(styles.paddingTop) + parseFloat(styles.paddingBottom)
-    const availW = cell.clientWidth - padX
-    const availH = cell.clientHeight - padY
-    if (availW <= 0 || availH <= 0) return
+      parseFloat(styles.paddingTop) + parseFloat(styles.paddingBottom);
+    const availW = cell.clientWidth - padX;
+    const availH = cell.clientHeight - padY;
+    if (availW <= 0 || availH <= 0) return;
 
-    let lo = MIN_FONT_PX
-    let hi = MAX_FONT_PX
-    let best = MIN_FONT_PX
+    let lo = MIN_FONT_PX;
+    let hi = MAX_FONT_PX;
+    let best = MIN_FONT_PX;
     while (lo <= hi) {
-      const mid = (lo + hi) >> 1
-      text.style.fontSize = `${mid}px`
+      const mid = (lo + hi) >> 1;
+      text.style.fontSize = `${mid}px`;
       if (text.scrollHeight <= availH && text.scrollWidth <= availW) {
-        best = mid
-        lo = mid + 1
+        best = mid;
+        lo = mid + 1;
       } else {
-        hi = mid - 1
+        hi = mid - 1;
       }
     }
-    text.style.fontSize = `${best}px`
-  }, [])
+    text.style.fontSize = `${best}px`;
+  }, []);
 
   useEffect(() => {
     if (ref.current && ref.current.textContent !== value) {
-      ref.current.textContent = value
+      ref.current.textContent = value;
     }
-    fitText()
-  }, [value, fitText])
+    fitText();
+  }, [value, fitText]);
 
   // Refit whenever the cell changes size (responsive / board resize).
   useLayoutEffect(() => {
-    const cell = cellRef.current
-    if (!cell) return
-    const observer = new ResizeObserver(() => fitText())
-    observer.observe(cell)
-    return () => observer.disconnect()
-  }, [fitText])
+    const cell = cellRef.current;
+    if (!cell) return;
+    const observer = new ResizeObserver(() => fitText());
+    observer.observe(cell);
+    return () => observer.disconnect();
+  }, [fitText]);
 
   const backgroundColor = isChecked
     ? 'bg-cell-checked'
     : index % 2 === 0
       ? 'bg-cell-light'
-      : 'bg-cell-dark'
+      : 'bg-cell-dark';
 
   return (
     <div
@@ -111,15 +111,15 @@ export function Cell({
         data-placeholder={canEdit ? 'TBC' : undefined}
         ref={ref}
         onInput={(e) => {
-          const text = e.currentTarget.textContent ?? ''
-          if (!text) e.currentTarget.innerHTML = ''
-          onChange?.(text)
-          fitText()
+          const text = e.currentTarget.textContent ?? '';
+          if (!text) e.currentTarget.innerHTML = '';
+          onChange?.(text);
+          fitText();
         }}
         suppressContentEditableWarning
       />
     </div>
-  )
+  );
 }
 
 export function BoardWrapper({
@@ -127,9 +127,9 @@ export function BoardWrapper({
   children,
   ref,
 }: {
-  size: number
-  children: React.ReactNode
-  ref?: React.Ref<HTMLDivElement>
+  size: number;
+  children: React.ReactNode;
+  ref?: React.Ref<HTMLDivElement>;
 }) {
   return (
     <div
@@ -142,5 +142,5 @@ export function BoardWrapper({
     >
       {children}
     </div>
-  )
+  );
 }

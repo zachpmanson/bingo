@@ -1,15 +1,15 @@
-import { Link, type LinkComponentProps } from '@tanstack/react-router'
+import { Link, type LinkComponentProps } from '@tanstack/react-router';
 
 type Params = { className?: string } & (
   | {
-      children: React.ReactNode
-      onClick: () => void
-      disabled?: boolean
+      children: React.ReactNode;
+      onClick: () => void;
+      disabled?: boolean;
     }
   | (LinkComponentProps<'a'> & {
-      onClick?: never
+      onClick?: never;
     })
-)
+);
 
 export default function Button(params: Params) {
   return params.onClick ? (
@@ -25,5 +25,5 @@ export default function Button(params: Params) {
       {...params}
       className={`border-2 rounded bg-blue-100 hover:bg-blue-200 active:bg-blue-300 w-fit py-1 px-2 border-solid border-black ${params.className}`}
     />
-  )
+  );
 }

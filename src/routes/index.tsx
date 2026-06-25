@@ -1,10 +1,10 @@
-import Button from '#/components/Button.tsx'
-import { useAllBoards } from '#/hooks/useBoard.ts'
-import { useOpenedBoardIds } from '#/hooks/useOpenedBoards.ts'
-import { seo } from '#/lib/seo'
-import { hasItems, suffix } from '#/lib/utils.ts'
+import Button from '#/components/Button.tsx';
+import { useAllBoards } from '#/hooks/useBoard.ts';
+import { useOpenedBoardIds } from '#/hooks/useOpenedBoards.ts';
+import { seo } from '#/lib/seo';
+import { detailedSuffix, hasItems } from '#/lib/utils.ts';
 
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/')({
   component: HomePage,
@@ -14,18 +14,18 @@ export const Route = createFileRoute('/')({
       description: 'Make, share, and play custom bingo boards.',
     }),
   }),
-})
+});
 
 export default function HomePage() {
-  const boards = useAllBoards()
-  const openedIds = useOpenedBoardIds()
+  const boards = useAllBoards();
+  const openedIds = useOpenedBoardIds();
 
   // Resolve the device's opened ids against synced boards, preserving
   // most-recently-opened order and dropping any that no longer exist.
-  const byId = new Map((boards ?? []).map((board) => [board.id, board]))
+  const byId = new Map((boards ?? []).map((board) => [board.id, board]));
   const recent = openedIds
     .map((id) => byId.get(id))
-    .filter((board): board is NonNullable<typeof board> => board != null)
+    .filter((board): board is NonNullable<typeof board> => board != null);
 
   return (
     <div>
@@ -41,7 +41,7 @@ export default function HomePage() {
               params={{ uuid: board.id }}
               className="w-full"
             >
-              <strong>{board.name}</strong> {suffix(board)}
+              <strong>{board.name}</strong> {detailedSuffix(board)}
             </Button>
           ))
         ) : (
@@ -54,5 +54,5 @@ export default function HomePage() {
         </Button> */}
       </div>
     </div>
-  )
+  );
 }

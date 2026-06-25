@@ -1,42 +1,45 @@
-import type { Cell } from '#/db-collections'
+import type { Cell } from '#/db-collections';
 
 export type CompletedLine = {
-  key: string
-  type: 'row' | 'col' | 'diag' | 'antiDiag'
-  index: number
-}
+  key: string;
+  type: 'row' | 'col' | 'diag' | 'antiDiag';
+  index: number;
+};
 
 // Returns every fully-checked line (rows, columns, and the two diagonals) on a
 // square board. Each line has a stable `key` so callers can diff against a
 // previous result to find lines that were *just* completed.
-export function getCompletedLines(cells: Cell[], size: number): CompletedLine[] {
-  if (!size || cells.length < size * size) return []
+export function getCompletedLines(
+  cells: Cell[],
+  size: number,
+): CompletedLine[] {
+  if (!size || cells.length < size * size) return [];
 
-  const checked = (r: number, c: number) => cells[r * size + c]?.checked
-  const lines: CompletedLine[] = []
+  const checked = (r: number, c: number) => cells[r * size + c]?.checked;
+  const lines: CompletedLine[] = [];
 
   for (let r = 0; r < size; r++) {
-    let all = true
-    for (let c = 0; c < size; c++) if (!checked(r, c)) all = false
-    if (all) lines.push({ key: `row-${r}`, type: 'row', index: r })
+    let all = true;
+    for (let c = 0; c < size; c++) if (!checked(r, c)) all = false;
+    if (all) lines.push({ key: `row-${r}`, type: 'row', index: r });
   }
 
   for (let c = 0; c < size; c++) {
-    let all = true
-    for (let r = 0; r < size; r++) if (!checked(r, c)) all = false
-    if (all) lines.push({ key: `col-${c}`, type: 'col', index: c })
+    let all = true;
+    for (let r = 0; r < size; r++) if (!checked(r, c)) all = false;
+    if (all) lines.push({ key: `col-${c}`, type: 'col', index: c });
   }
 
-  let diag = true
-  let antiDiag = true
+  let diag = true;
+  let antiDiag = true;
   for (let i = 0; i < size; i++) {
-    if (!checked(i, i)) diag = false
-    if (!checked(i, size - 1 - i)) antiDiag = false
+    if (!checked(i, i)) diag = false;
+    if (!checked(i, size - 1 - i)) antiDiag = false;
   }
-  if (diag) lines.push({ key: 'diag', type: 'diag', index: 0 })
-  if (antiDiag) lines.push({ key: 'antiDiag', type: 'antiDiag', index: 0 })
+  if (diag) lines.push({ key: 'diag', type: 'diag', index: 0 });
+  if (antiDiag) lines.push({ key: 'antiDiag', type: 'antiDiag', index: 0 });
 
-  return lines
+  return lines;
 }
 
 // Builds a fresh size×size grid by taking a random subset of `pool` placed in
@@ -44,20 +47,20 @@ export function getCompletedLines(cells: Cell[], size: number): CompletedLine[] 
 // board from a shuffled board's item pool, so `Math.random()` is fine here. If
 // the pool is somehow smaller than size², the remainder is padded with blanks.
 export function randomBoardCells(pool: Cell[], size: number): Cell[] {
-  const count = size * size
-  const shuffled = pool.slice()
+  const count = size * size;
+  const shuffled = pool.slice();
   for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
   return Array.from({ length: count }, (_, i) => ({
     text: shuffled[i]?.text ?? '',
     checked: false,
-  }))
+  }));
 }
 
-type Rect = { left: number; top: number; width: number; height: number }
-export type ConfettiSource = { x: number; y: number; w: number; h: number }
+type Rect = { left: number; top: number; width: number; height: number };
+export type ConfettiSource = { x: number; y: number; w: number; h: number };
 
 // Maps a completed line to a viewport-relative origin rectangle for confetti.
 // Rows become a horizontal strip, columns a vertical strip, and diagonals span
@@ -67,8 +70,8 @@ export function lineToSource(
   size: number,
   rect: Rect,
 ): ConfettiSource {
-  const cellW = rect.width / size
-  const cellH = rect.height / size
+  const cellW = rect.width / size;
+  const cellH = rect.height / size;
 
   if (line.type === 'row') {
     return {
@@ -76,7 +79,7 @@ export function lineToSource(
       y: rect.top + (line.index + 0.5) * cellH,
       w: rect.width,
       h: 0,
-    }
+    };
   }
   if (line.type === 'col') {
     return {
@@ -84,7 +87,7 @@ export function lineToSource(
       y: rect.top,
       w: 0,
       h: rect.height,
-    }
+    };
   }
-  return { x: rect.left, y: rect.top, w: rect.width, h: rect.height }
+  return { x: rect.left, y: rect.top, w: rect.width, h: rect.height };
 }

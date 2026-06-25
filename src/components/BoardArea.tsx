@@ -1,93 +1,94 @@
-import { boardsCollection } from '#/db-collections'
-import type { Cell as CellType } from '#/db-collections'
-import { useBoards } from '#/hooks/useBoard.ts'
-import { useClipboard } from '#/hooks/useClipboard.ts'
-import { getCompletedLines, lineToSource } from '#/lib/bingo.ts'
-import { useNavigate } from '@tanstack/react-router'
-import { useEffect, useRef, useState } from 'react'
-import Button from './Button'
-import { BoardWrapper, Cell } from './Cell'
-import Confetti, { type Burst } from './Confetti'
+import type { Cell as CellType } from '#/db-collections';
+import { boardsCollection } from '#/db-collections';
+import { useBoards } from '#/hooks/useBoard.ts';
+import { useClipboard } from '#/hooks/useClipboard.ts';
+import { getCompletedLines, lineToSource } from '#/lib/bingo.ts';
+import { basicSuffix } from '#/lib/utils.ts';
+import { useNavigate } from '@tanstack/react-router';
+import { useEffect, useRef, useState } from 'react';
+import Button from './Button';
+import { BoardWrapper, Cell } from './Cell';
+import Confetti, { type Burst } from './Confetti';
 
 function buildEmojiGrid(cells: CellType[], size: number): string {
-  const rows: string[] = []
+  const rows: string[] = [];
   for (let r = 0; r < size; r++) {
-    let row = ''
+    let row = '';
     for (let c = 0; c < size; c++) {
-      row += cells[r * size + c].checked ? '🟩' : '⬜'
+      row += cells[r * size + c].checked ? '🟩' : '⬜';
     }
-    rows.push(row)
+    rows.push(row);
   }
-  return rows.join('\n')
+  return rows.join('\n');
 }
 
 export default function BoardArea({ uuid }: { uuid: string }) {
-  const board = useBoards(uuid)
-  const { share, copiedKey } = useClipboard()
-  const navigate = useNavigate()
+  const board = useBoards(uuid);
+  const { share, copiedKey } = useClipboard();
+  const navigate = useNavigate();
 
   // A shuffled board is an item-pool template, not a playable grid — send the
   // owner to its management view instead.
   useEffect(() => {
     if (board?.kind === 'shuffled') {
-      navigate({ to: '/board/$uuid/edit', params: { uuid }, replace: true })
+      navigate({ to: '/board/$uuid/edit', params: { uuid }, replace: true });
     }
-  }, [board?.kind, navigate, uuid])
+  }, [board?.kind, navigate, uuid]);
 
   // Celebrate whenever the user checks a cell that completes a new line —
   // confetti pops from the on-screen position of that line. We fire on the
   // explicit check action (not reactively on board state) so the optimistic
   // update / sync round-trip can't replay a stale "complete" state and trigger
   // a false burst. Deselecting a cell never celebrates.
-  const boardRef = useRef<HTMLDivElement>(null)
-  const [burst, setBurst] = useState<Burst | null>(null)
-  const [bingoSummary, setBingoSummary] = useState<string | null>(null)
-  const [copiedBingo, setCopiedBingo] = useState(false)
+  const boardRef = useRef<HTMLDivElement>(null);
+  const [burst, setBurst] = useState<Burst | null>(null);
+  const [bingoSummary, setBingoSummary] = useState<string | null>(null);
+  const [copiedBingo, setCopiedBingo] = useState(false);
 
   const toggleCell = (index: number, wasChecked: boolean) => {
     boardsCollection.update(uuid, (draft) => {
-      draft.cells[index].checked = !wasChecked
-    })
-    if (!board || !boardRef.current) return
+      draft.cells[index].checked = !wasChecked;
+    });
+    if (!board || !boardRef.current) return;
 
-    const before = getCompletedLines(board.cells, board.size)
-    const beforeKeys = new Set(before.map((l) => l.key))
+    const before = getCompletedLines(board.cells, board.size);
+    const beforeKeys = new Set(before.map((l) => l.key));
     const nextCells = board.cells.map((c, i) =>
       i === index ? { ...c, checked: !wasChecked } : c,
-    )
-    const after = getCompletedLines(nextCells, board.size)
+    );
+    const after = getCompletedLines(nextCells, board.size);
 
     if (wasChecked) {
-      const lostLine = before.some((l) => !after.find((a) => a.key === l.key))
-      if (lostLine) setBingoSummary(null)
-      return
+      const lostLine = before.some((l) => !after.find((a) => a.key === l.key));
+      if (lostLine) setBingoSummary(null);
+      return;
     }
 
-    const newLine = after.find((l) => !beforeKeys.has(l.key))
+    const newLine = after.find((l) => !beforeKeys.has(l.key));
     if (newLine) {
       const source = lineToSource(
         newLine,
         board.size,
         boardRef.current.getBoundingClientRect(),
-      )
-      setBurst((prev) => ({ key: (prev?.key ?? 0) + 1, source }))
+      );
+      setBurst((prev) => ({ key: (prev?.key ?? 0) + 1, source }));
       const label = [
         board.name,
         board.childIndex !== undefined ? `#${board.childIndex}` : null,
         'BINGO!',
       ]
         .filter(Boolean)
-        .join(' ')
-      setBingoSummary(`${label}\n${buildEmojiGrid(nextCells, board.size)}`)
+        .join(' ');
+      setBingoSummary(`${label}\n${buildEmojiGrid(nextCells, board.size)}`);
     }
-  }
+  };
 
   useEffect(() => {
-    if (board?.name) document.title = board.name
-  }, [board?.name])
+    if (board?.name) document.title = basicSuffix(board);
+  }, [board?.name]);
 
   const shareLink = (key: string, path: string, title: string) =>
-    void share(key, `${window.location.origin}${path}`, { title })
+    void share(key, `${window.location.origin}${path}`, { title });
 
   return (
     <div className="py-4 flex flex-col gap-4 items-center">
@@ -131,9 +132,9 @@ export default function BoardArea({ uuid }: { uuid: string }) {
           </pre>
           <Button
             onClick={() => {
-              void navigator.clipboard.writeText(bingoSummary)
-              setCopiedBingo(true)
-              setTimeout(() => setCopiedBingo(false), 2000)
+              void navigator.clipboard.writeText(bingoSummary);
+              setCopiedBingo(true);
+              setTimeout(() => setCopiedBingo(false), 2000);
             }}
           >
             {copiedBingo ? 'Copied!' : 'Copy to Share 📋'}
@@ -170,5 +171,5 @@ export default function BoardArea({ uuid }: { uuid: string }) {
         </div>
       )}
     </div>
-  )
+  );
 }

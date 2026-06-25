@@ -1,7 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router';
 
-import BoardEdit from '#/components/BoardEdit.tsx'
-import { seo } from '#/lib/seo'
+import BoardEdit from '#/components/BoardEdit.tsx';
+import { seo } from '#/lib/seo';
 
 export const Route = createFileRoute('/board/new')({
   head: () => ({
@@ -12,12 +12,12 @@ export const Route = createFileRoute('/board/new')({
   }),
   component: App,
   ssr: false,
-})
+});
 
 function App() {
   return (
     <div className="flex flex-col h-screen bg-white">
       <BoardEdit />
     </div>
-  )
+  );
 }

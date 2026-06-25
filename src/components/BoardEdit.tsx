@@ -1,14 +1,14 @@
-import { useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
-import { boardsCollection, type Board, type Cell } from '../db-collections'
-import Button from './Button'
-import { BoardWrapper, Cell as CellView } from './Cell'
+import { useNavigate } from '@tanstack/react-router';
+import { useState } from 'react';
+import { boardsCollection, type Board, type Cell } from '../db-collections';
+import Button from './Button';
+import { BoardWrapper, Cell as CellView } from './Cell';
 
-const emptyCell = (): Cell => ({ text: '', checked: false })
+const emptyCell = (): Cell => ({ text: '', checked: false });
 
 export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
-  const navigate = useNavigate()
-  const [newItemText, setNewItemText] = useState('')
+  const navigate = useNavigate();
+  const [newItemText, setNewItemText] = useState('');
   const [board, setBoard] = useState<Board>(
     initialBoard
       ? {
@@ -28,33 +28,33 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
           cells: Array.from({ length: 25 }, emptyCell),
           size: 5,
         },
-  )
+  );
 
-  const trimmedName = board.name.trim()
-  const hasName = trimmedName.length > 0
-  const isShuffled = board.kind === 'shuffled'
-  const needed = board.size * board.size
+  const trimmedName = board.name.trim();
+  const hasName = trimmedName.length > 0;
+  const isShuffled = board.kind === 'shuffled';
+  const needed = board.size * board.size;
   const filledCount =
     board.cells.filter((c) => c.text.trim() !== '').length +
-    (newItemText.trim() ? 1 : 0)
-  const hasEnoughItems = filledCount >= needed
-  const canCreate = hasName && (!isShuffled || hasEnoughItems)
+    (newItemText.trim() ? 1 : 0);
+  const hasEnoughItems = filledCount >= needed;
+  const canCreate = hasName && (!isShuffled || hasEnoughItems);
 
   // Switching kind keeps the texts the user already typed: going to fixed
   // normalizes the pool to exactly size² cells; going to shuffled keeps them all.
   const setKind = (kind: Board['kind']) => {
     setBoard((prev) => {
-      if (kind === prev.kind) return prev
+      if (kind === prev.kind) return prev;
       if (kind === 'fixed') {
         const cells = Array.from(
           { length: prev.size * prev.size },
           (_, i) => prev.cells[i] ?? emptyCell(),
-        )
-        return { ...prev, kind, cells }
+        );
+        return { ...prev, kind, cells };
       }
-      return { ...prev, kind }
-    })
-  }
+      return { ...prev, kind };
+    });
+  };
 
   const setSize = (size: number) => {
     setBoard((prev) =>
@@ -67,49 +67,52 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
             cells: Array.from({ length: size * size }, emptyCell),
           }
         : { ...prev, size },
-    )
-  }
+    );
+  };
 
   const setCellText = (index: number, text: string) =>
     setBoard((prev) => {
-      const cells = [...prev.cells]
-      cells[index] = { ...cells[index], text }
-      return { ...prev, cells }
-    })
+      const cells = [...prev.cells];
+      cells[index] = { ...cells[index], text };
+      return { ...prev, cells };
+    });
 
   const removeItem = (index: number) =>
     setBoard((prev) => ({
       ...prev,
       cells: prev.cells.filter((_, i) => i !== index),
-    }))
+    }));
 
-  const isEditing = Boolean(initialBoard?.id)
+  const isEditing = Boolean(initialBoard?.id);
 
   const save = () => {
-    if (!canCreate) return
-    const existingCells = board.cells.filter((c) => c.text.trim() !== '')
+    if (!canCreate) return;
+    const existingCells = board.cells.filter((c) => c.text.trim() !== '');
     const allCells = newItemText.trim()
-      ? [...existingCells, { text: newItemText.trim(), checked: false as const }]
-      : existingCells
-    const cells = allCells.map((c) => ({ text: c.text, checked: false }))
+      ? [
+          ...existingCells,
+          { text: newItemText.trim(), checked: false as const },
+        ]
+      : existingCells;
+    const cells = allCells.map((c) => ({ text: c.text, checked: false }));
 
     if (isEditing) {
       // Edit in place: the owner is changing this board's own content, so keep
       // its id/sharingId (existing share links stay valid) and update the
       // record rather than forking a fresh copy.
       boardsCollection.update(initialBoard!.id, (draft) => {
-        draft.name = trimmedName
-        draft.kind = board.kind
-        draft.size = board.size
-        draft.cells = cells
-      })
-      navigate({ to: '/board/$uuid/edit', params: { uuid: initialBoard!.id } })
-      return
+        draft.name = trimmedName;
+        draft.kind = board.kind;
+        draft.size = board.size;
+        draft.cells = cells;
+      });
+      navigate({ to: '/board/$uuid/edit', params: { uuid: initialBoard!.id } });
+      return;
     }
 
     // A newly created board is a fresh source: it has no parent and no children
     // yet.
-    const { childIndex: _childIndex, ...rest } = board
+    const { childIndex: _childIndex, ...rest } = board;
     const newBoard: Board = {
       ...rest,
       name: trimmedName,
@@ -117,14 +120,14 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
       sharingId: crypto.randomUUID(),
       childCount: 0,
       cells,
-    }
-    boardsCollection.insert(newBoard)
+    };
+    boardsCollection.insert(newBoard);
     if (newBoard.kind === 'shuffled') {
-      navigate({ to: '/board/$uuid/edit', params: { uuid: newBoard.id } })
+      navigate({ to: '/board/$uuid/edit', params: { uuid: newBoard.id } });
     } else {
-      navigate({ to: '/board/$uuid', params: { uuid: newBoard.id } })
+      navigate({ to: '/board/$uuid', params: { uuid: newBoard.id } });
     }
-  }
+  };
 
   return (
     <div className="w-full justify-center flex">
@@ -203,13 +206,13 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
                       ...prev.cells,
                       { text: newItemText.trim(), checked: false },
                     ],
-                  }))
-                  setNewItemText('')
+                  }));
+                  setNewItemText('');
                 }
               }}
             />
             {[...board.cells].reverse().map((cell, reversedIndex) => {
-              const originalIndex = board.cells.length - 1 - reversedIndex
+              const originalIndex = board.cells.length - 1 - reversedIndex;
               return (
                 <div key={originalIndex} className="flex gap-2 items-center">
                   <input
@@ -221,7 +224,7 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
                   />
                   <Button onClick={() => removeItem(originalIndex)}>✕</Button>
                 </div>
-              )
+              );
             })}
           </div>
         ) : (
@@ -239,5 +242,5 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
         )}
       </div>
     </div>
-  )
+  );
 }

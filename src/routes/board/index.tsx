@@ -1,9 +1,9 @@
-import Button from '#/components/Button.tsx'
-import { useAllBoards } from '#/hooks/useBoard.ts'
-import { seo } from '#/lib/seo'
-import { hasItems, suffix } from '#/lib/utils.ts'
+import Button from '#/components/Button.tsx';
+import { useAllBoards } from '#/hooks/useBoard.ts';
+import { seo } from '#/lib/seo';
+import { detailedSuffix, hasItems } from '#/lib/utils.ts';
 
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/board/')({
   component: AllBoardsPage,
@@ -14,10 +14,10 @@ export const Route = createFileRoute('/board/')({
       description: 'Browse every bingo board.',
     }),
   }),
-})
+});
 
 function AllBoardsPage() {
-  const boards = useAllBoards()
+  const boards = useAllBoards();
 
   return (
     <div>
@@ -33,7 +33,7 @@ function AllBoardsPage() {
               params={{ uuid: board.id }}
               className="w-full"
             >
-              <strong>{board.name}</strong> {suffix(board)} ({board.id})
+              <strong>{board.name}</strong> {detailedSuffix(board)} ({board.id})
             </Button>
           ))
         ) : (
@@ -41,5 +41,5 @@ function AllBoardsPage() {
         )}
       </div>
     </div>
-  )
+  );
 }

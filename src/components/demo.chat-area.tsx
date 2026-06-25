@@ -1,29 +1,29 @@
-import { useState } from 'react'
+import { useState } from 'react';
 
-import { useChat, useMessages } from '#/hooks/demo.useChat'
+import { useChat, useMessages } from '#/hooks/demo.useChat';
 
-import Messages from './demo.messages'
+import Messages from './demo.messages';
 
 export default function ChatArea() {
-  const { sendMessage } = useChat()
+  const { sendMessage } = useChat();
 
-  const messages = useMessages()
+  const messages = useMessages();
 
-  const [message, setMessage] = useState('')
-  const [user, setUser] = useState('Alice')
+  const [message, setMessage] = useState('');
+  const [user, setUser] = useState('Alice');
 
   const postMessage = () => {
     if (message.trim().length) {
-      sendMessage(message, user)
-      setMessage('')
+      sendMessage(message, user);
+      setMessage('');
     }
-  }
+  };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      postMessage()
+      postMessage();
     }
-  }
+  };
 
   return (
     <>
@@ -63,5 +63,5 @@ export default function ChatArea() {
         </div>
       </div>
     </>
-  )
+  );
 }

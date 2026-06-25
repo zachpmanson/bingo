@@ -1,8 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router';
 
-import BoardEdit from '#/components/BoardEdit.tsx'
-import { useBoards } from '#/hooks/useBoard.ts'
-import { seo } from '#/lib/seo'
+import BoardEdit from '#/components/BoardEdit.tsx';
+import { useBoards } from '#/hooks/useBoard.ts';
+import { seo } from '#/lib/seo';
 
 export const Route = createFileRoute('/board/$uuid_/fork')({
   component: App,
@@ -13,11 +13,11 @@ export const Route = createFileRoute('/board/$uuid_/fork')({
       description: 'Edit your custom bingo board.',
     }),
   }),
-})
+});
 
 function App() {
-  const { uuid } = Route.useParams()
-  const board = useBoards(uuid)
+  const { uuid } = Route.useParams();
+  const board = useBoards(uuid);
 
   return (
     <div className="flex flex-col h-screen bg-white">
@@ -27,5 +27,5 @@ function App() {
         <div className="p-4">Loading...</div>
       )}
     </div>
-  )
+  );
 }

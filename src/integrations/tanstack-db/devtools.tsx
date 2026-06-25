@@ -1,31 +1,31 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
-import { boardsCollection, messagesCollection } from '#/db-collections'
+import { boardsCollection, messagesCollection } from '#/db-collections';
 
-import type { Collection } from '@tanstack/react-db'
+import type { Collection } from '@tanstack/react-db';
 
 const collections: Record<string, Collection<any, any, any>> = {
   boards: boardsCollection,
   messages: messagesCollection,
-}
+};
 
 function CollectionView({
   name,
   collection,
 }: {
-  name: string
-  collection: Collection<any, any, any>
+  name: string;
+  collection: Collection<any, any, any>;
 }) {
   const [items, setItems] = useState<Array<unknown>>(() => [
     ...collection.state.values(),
-  ])
+  ]);
 
   useEffect(() => {
-    const sync = () => setItems([...collection.state.values()])
-    sync()
-    const sub = collection.subscribeChanges(sync)
-    return () => sub.unsubscribe()
-  }, [collection])
+    const sync = () => setItems([...collection.state.values()]);
+    sync();
+    const sub = collection.subscribeChanges(sync);
+    return () => sub.unsubscribe();
+  }, [collection]);
 
   return (
     <details open style={{ marginBottom: 12 }}>
@@ -53,7 +53,7 @@ function CollectionView({
         {JSON.stringify(items, null, 2)}
       </pre>
     </details>
-  )
+  );
 }
 
 function DBDevtoolsPanel() {
@@ -63,10 +63,10 @@ function DBDevtoolsPanel() {
         <CollectionView key={name} name={name} collection={collection} />
       ))}
     </div>
-  )
+  );
 }
 
 export default {
   name: 'Tanstack DB',
   render: <DBDevtoolsPanel />,
-}
+};

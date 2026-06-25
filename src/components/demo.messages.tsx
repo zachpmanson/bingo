@@ -1,4 +1,4 @@
-import type { Message } from '#/db-collections'
+import type { Message } from '#/db-collections';
 
 export const getAvatarColor = (username: string) => {
   const colors = [
@@ -10,19 +10,19 @@ export const getAvatarColor = (username: string) => {
     'bg-red-500',
     'bg-yellow-500',
     'bg-teal-500',
-  ]
+  ];
   const index = username
     .split('')
-    .reduce((acc, char) => acc + char.charCodeAt(0), 0)
-  return colors[index % colors.length]
-}
+    .reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return colors[index % colors.length];
+};
 
 export default function Messages({
   messages,
   user,
 }: {
-  messages: Message[]
-  user: string
+  messages: Message[];
+  user: string;
 }) {
   return (
     <>
@@ -64,5 +64,5 @@ export default function Messages({
         </div>
       ))}
     </>
-  )
+  );
 }

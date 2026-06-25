@@ -1,10 +1,10 @@
-const SITE_NAME = 'Bingo'
+const SITE_NAME = 'Bingo';
 
 interface SeoOptions {
-  title?: string
-  description?: string
+  title?: string;
+  description?: string;
   /** og:type, defaults to 'website' */
-  type?: string
+  type?: string;
 }
 
 /**
@@ -12,7 +12,7 @@ interface SeoOptions {
  * matching Open Graph and Twitter Card tags so links unfurl nicely.
  */
 export function seo({ title, description, type = 'website' }: SeoOptions = {}) {
-  const fullTitle = title ? `${title} · ${SITE_NAME}` : SITE_NAME
+  const fullTitle = title ? `${title} · ${SITE_NAME}` : SITE_NAME;
 
   const meta: Array<Record<string, string>> = [
     { title: fullTitle },
@@ -21,15 +21,15 @@ export function seo({ title, description, type = 'website' }: SeoOptions = {}) {
     { property: 'og:type', content: type },
     { name: 'twitter:card', content: 'summary' },
     { name: 'twitter:title', content: fullTitle },
-  ]
+  ];
 
   if (description) {
     meta.push(
       { name: 'description', content: description },
       { property: 'og:description', content: description },
       { name: 'twitter:description', content: description },
-    )
+    );
   }
 
-  return meta
+  return meta;
 }

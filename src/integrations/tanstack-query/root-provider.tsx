@@ -1,10 +1,10 @@
-import type { ReactNode } from 'react'
-import { QueryClient } from '@tanstack/react-query'
-import superjson from 'superjson'
-import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query'
+import type { ReactNode } from 'react';
+import { QueryClient } from '@tanstack/react-query';
+import superjson from 'superjson';
+import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
 
-import { TRPCProvider } from '#/integrations/trpc/react'
-import { trpcClient } from '#/integrations/trpc/client'
+import { TRPCProvider } from '#/integrations/trpc/react';
+import { trpcClient } from '#/integrations/trpc/client';
 
 export function getContext() {
   const queryClient = new QueryClient({
@@ -12,32 +12,32 @@ export function getContext() {
       dehydrate: { serializeData: superjson.serialize },
       hydrate: { deserializeData: superjson.deserialize },
     },
-  })
+  });
 
   const serverHelpers = createTRPCOptionsProxy({
     client: trpcClient,
     queryClient: queryClient,
-  })
+  });
   const context = {
     queryClient,
     trpc: serverHelpers,
-  }
+  };
 
-  return context
+  return context;
 }
 
 export default function TanstackQueryProvider({
   children,
   context,
 }: {
-  children: ReactNode
-  context: ReturnType<typeof getContext>
+  children: ReactNode;
+  context: ReturnType<typeof getContext>;
 }) {
-  const { queryClient } = context
+  const { queryClient } = context;
 
   return (
     <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
       {children}
     </TRPCProvider>
-  )
+  );
 }

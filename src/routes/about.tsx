@@ -1,6 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router';
 
-import { seo } from '#/lib/seo'
+import { seo } from '#/lib/seo';
 
 export const Route = createFileRoute('/about')({
   component: About,
@@ -10,7 +10,7 @@ export const Route = createFileRoute('/about')({
       description: 'About this bingo app.',
     }),
   }),
-})
+});
 
 function About() {
   return (
@@ -27,5 +27,5 @@ function About() {
         </p>
       </section>
     </main>
-  )
+  );
 }

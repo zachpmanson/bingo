@@ -1,8 +1,8 @@
-import Button from '#/components/Button.tsx'
-import { seo } from '#/lib/seo'
-import { useAllBoards } from '#/hooks/useBoard.ts'
+import Button from '#/components/Button.tsx';
+import { seo } from '#/lib/seo';
+import { useAllBoards } from '#/hooks/useBoard.ts';
 
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/board/list')({
   component: BoardListPage,
@@ -13,10 +13,10 @@ export const Route = createFileRoute('/board/list')({
       description: 'Browse your bingo boards.',
     }),
   }),
-})
+});
 
 function BoardListPage() {
-  const boards = useAllBoards()
+  const boards = useAllBoards();
 
   return (
     <div>
@@ -33,5 +33,5 @@ function BoardListPage() {
         )}
       </div>
     </div>
-  )
+  );
 }

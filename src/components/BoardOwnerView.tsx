@@ -1,26 +1,27 @@
-import { useBoards } from '#/hooks/useBoard.ts'
-import { useClipboard } from '#/hooks/useClipboard.ts'
-import { useEffect } from 'react'
-import Button from './Button'
+import { useBoards } from '#/hooks/useBoard.ts';
+import { useClipboard } from '#/hooks/useClipboard.ts';
+import { basicSuffix } from '#/lib/utils.ts';
+import { useEffect } from 'react';
+import Button from './Button';
 
 // Static (non-playable) view of a board for its owner: shows the items and a
 // share link. Works for both board kinds — for a shuffled board the share link
 // generates a fresh random board on every open; for a fixed board it generates
 // a copy. This is where you land after creating a shuffled board.
 export default function BoardOwnerView({ uuid }: { uuid: string }) {
-  const board = useBoards(uuid)
-  const { share, copiedKey } = useClipboard()
+  const board = useBoards(uuid);
+  const { share, copiedKey } = useClipboard();
 
   useEffect(() => {
-    if (board?.name) document.title = board.name
-  }, [board?.name])
+    if (board?.name) document.title = basicSuffix(board);
+  }, [board?.name]);
 
-  if (!board) return <div className="p-4">Loading...</div>
+  if (!board) return <div className="p-4">Loading...</div>;
 
-  const isShuffled = board.kind === 'shuffled'
+  const isShuffled = board.kind === 'shuffled';
   const summary = isShuffled
     ? `${board.cells.length} items → ${board.size}×${board.size} (each link draws a random ${board.size * board.size})`
-    : `${board.size}×${board.size}`
+    : `${board.size}×${board.size}`;
 
   return (
     <div className="py-4 px-4 flex flex-col gap-4 items-center">
@@ -63,5 +64,5 @@ export default function BoardOwnerView({ uuid }: { uuid: string }) {
         ))}
       </ul>
     </div>
-  )
+  );
 }
