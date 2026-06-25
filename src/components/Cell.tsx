@@ -106,7 +106,7 @@ export function Cell({
         />
       </svg>
       <div
-        className="relative z-10 text-center w-full outline-none"
+        className="relative z-10 text-center w-full outline-none break-normal"
         contentEditable={canEdit}
         data-placeholder={canEdit ? 'TBC' : undefined}
         ref={ref}
