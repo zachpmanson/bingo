@@ -30,5 +30,12 @@ export function useClipboard(resetMs = 2000) {
     timer.current = setTimeout(() => setCopiedKey(null), resetMs);
   };
 
-  return { share, copiedKey };
+  const copy = async (key: string, text: string) => {
+    await navigator.clipboard.writeText(text);
+    setCopiedKey(key);
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => setCopiedKey(null), resetMs);
+  };
+
+  return { share, copy, copiedKey };
 }
