@@ -1,6 +1,6 @@
 import { useBoards } from '#/hooks/useBoard.ts';
 import { useClipboard } from '#/hooks/useClipboard.ts';
-import { basicSuffix } from '#/lib/utils.ts';
+import { basicBoardTitle } from '#/lib/utils.ts';
 import { useEffect } from 'react';
 import Button from './Button';
 
@@ -13,7 +13,7 @@ export default function BoardOwnerView({ uuid }: { uuid: string }) {
   const { share, copiedKey } = useClipboard();
 
   useEffect(() => {
-    if (board?.name) document.title = basicSuffix(board);
+    if (board?.name) document.title = basicBoardTitle(board);
   }, [board?.name]);
 
   if (!board) return <div className="p-4">Loading...</div>;

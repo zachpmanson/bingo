@@ -11,14 +11,14 @@ export function hasItems<T>(arr: T[] | undefined | null): boolean {
   return !!(arr && arr.length > 0);
 }
 
-export function basicSuffix(b: Board) {
+export function basicBoardTitle(b: Board) {
   if (b.kind === 'fixed' && b.childIndex) {
-    return `#${b.childIndex}`;
+    return `${b.name} #${b.childIndex}`;
   }
   if (b.kind === 'shuffled') {
-    return `Template`;
+    return `${b.name} Template`;
   }
-  return `(${b.size}x${b.size})`;
+  return b.name;
 }
 
 export function detailedSuffix(b: Board) {

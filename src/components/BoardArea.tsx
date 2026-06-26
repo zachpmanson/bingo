@@ -3,7 +3,7 @@ import { boardsCollection } from '#/db-collections';
 import { useBoards } from '#/hooks/useBoard.ts';
 import { useClipboard } from '#/hooks/useClipboard.ts';
 import { getCompletedLines, lineToSource } from '#/lib/bingo.ts';
-import { basicSuffix } from '#/lib/utils.ts';
+import { basicBoardTitle } from '#/lib/utils.ts';
 import { useNavigate } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 import Button from './Button';
@@ -84,7 +84,7 @@ export default function BoardArea({ uuid }: { uuid: string }) {
   };
 
   useEffect(() => {
-    if (board?.name) document.title = basicSuffix(board);
+    if (board?.name) document.title = basicBoardTitle(board);
   }, [board?.name]);
 
   const shareLink = (key: string, path: string, title: string) =>
