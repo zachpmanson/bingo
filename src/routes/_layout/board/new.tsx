@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import BoardEdit from '#/components/BoardEdit.tsx';
 import { seo } from '#/lib/seo';
 
-export const Route = createFileRoute('/board/new')({
+export const Route = createFileRoute('/_layout/board/new')({
   head: () => ({
     meta: seo({
       title: 'New Board',
@@ -16,7 +16,7 @@ export const Route = createFileRoute('/board/new')({
 
 function App() {
   return (
-    <div className="flex flex-col h-screen bg-white">
+    <div className="flex flex-col">
       <BoardEdit />
     </div>
   );

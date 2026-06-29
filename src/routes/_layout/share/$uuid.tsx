@@ -4,7 +4,7 @@ import type { Board } from '#/db-collections';
 import { randomBoardCells } from '#/lib/bingo.ts';
 import { findBoardBySharingId, serverBoardsCollection } from '#/server/boards';
 
-export const Route = createFileRoute('/share/$uuid')({
+export const Route = createFileRoute('/_layout/share/$uuid')({
   server: {
     handlers: {
       GET: ({ params }) => {

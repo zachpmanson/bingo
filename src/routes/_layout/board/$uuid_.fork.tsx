@@ -4,7 +4,7 @@ import BoardEdit from '#/components/BoardEdit.tsx';
 import { useBoards } from '#/hooks/useBoard.ts';
 import { seo } from '#/lib/seo';
 
-export const Route = createFileRoute('/board/$uuid_/fork')({
+export const Route = createFileRoute('/_layout/board/$uuid_/fork')({
   component: App,
   ssr: false,
   head: () => ({
@@ -20,7 +20,7 @@ function App() {
   const board = useBoards(uuid);
 
   return (
-    <div className="flex flex-col h-screen bg-white">
+    <div className="flex flex-col">
       {board ? (
         <BoardEdit initialBoard={board} />
       ) : (

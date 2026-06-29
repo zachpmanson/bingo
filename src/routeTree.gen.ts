@@ -9,21 +9,20 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AboutRouteImport } from './routes/about'
+import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as BoardIndexRouteImport } from './routes/board/index'
-import { Route as ShareUuidRouteImport } from './routes/share/$uuid'
-import { Route as BoardNewRouteImport } from './routes/board/new'
-import { Route as BoardLiveApiRouteImport } from './routes/board/live-api'
-import { Route as BoardListRouteImport } from './routes/board/list'
-import { Route as BoardUuidRouteImport } from './routes/board/$uuid'
-import { Route as BoardUuidForkRouteImport } from './routes/board/$uuid_.fork'
-import { Route as BoardUuidEditRouteImport } from './routes/board/$uuid_.edit'
+import { Route as LayoutBoardIndexRouteImport } from './routes/_layout/board/index'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api.trpc.$'
+import { Route as LayoutShareUuidRouteImport } from './routes/_layout/share/$uuid'
+import { Route as LayoutBoardNewRouteImport } from './routes/_layout/board/new'
+import { Route as LayoutBoardLiveApiRouteImport } from './routes/_layout/board/live-api'
+import { Route as LayoutBoardListRouteImport } from './routes/_layout/board/list'
+import { Route as LayoutBoardUuidRouteImport } from './routes/_layout/board/$uuid'
+import { Route as LayoutBoardUuidForkRouteImport } from './routes/_layout/board/$uuid_.fork'
+import { Route as LayoutBoardUuidEditRouteImport } from './routes/_layout/board/$uuid_.edit'
 
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
+const LayoutRoute = LayoutRouteImport.update({
+  id: '/_layout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -31,155 +30,143 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BoardIndexRoute = BoardIndexRouteImport.update({
+const LayoutBoardIndexRoute = LayoutBoardIndexRouteImport.update({
   id: '/board/',
   path: '/board/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ShareUuidRoute = ShareUuidRouteImport.update({
-  id: '/share/$uuid',
-  path: '/share/$uuid',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BoardNewRoute = BoardNewRouteImport.update({
-  id: '/board/new',
-  path: '/board/new',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BoardLiveApiRoute = BoardLiveApiRouteImport.update({
-  id: '/board/live-api',
-  path: '/board/live-api',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BoardListRoute = BoardListRouteImport.update({
-  id: '/board/list',
-  path: '/board/list',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BoardUuidRoute = BoardUuidRouteImport.update({
-  id: '/board/$uuid',
-  path: '/board/$uuid',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BoardUuidForkRoute = BoardUuidForkRouteImport.update({
-  id: '/board/$uuid_/fork',
-  path: '/board/$uuid/fork',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BoardUuidEditRoute = BoardUuidEditRouteImport.update({
-  id: '/board/$uuid_/edit',
-  path: '/board/$uuid/edit',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => LayoutRoute,
 } as any)
 const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
   id: '/api/trpc/$',
   path: '/api/trpc/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LayoutShareUuidRoute = LayoutShareUuidRouteImport.update({
+  id: '/share/$uuid',
+  path: '/share/$uuid',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutBoardNewRoute = LayoutBoardNewRouteImport.update({
+  id: '/board/new',
+  path: '/board/new',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutBoardLiveApiRoute = LayoutBoardLiveApiRouteImport.update({
+  id: '/board/live-api',
+  path: '/board/live-api',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutBoardListRoute = LayoutBoardListRouteImport.update({
+  id: '/board/list',
+  path: '/board/list',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutBoardUuidRoute = LayoutBoardUuidRouteImport.update({
+  id: '/board/$uuid',
+  path: '/board/$uuid',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutBoardUuidForkRoute = LayoutBoardUuidForkRouteImport.update({
+  id: '/board/$uuid_/fork',
+  path: '/board/$uuid/fork',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutBoardUuidEditRoute = LayoutBoardUuidEditRouteImport.update({
+  id: '/board/$uuid_/edit',
+  path: '/board/$uuid/edit',
+  getParentRoute: () => LayoutRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/board/$uuid': typeof BoardUuidRoute
-  '/board/list': typeof BoardListRoute
-  '/board/live-api': typeof BoardLiveApiRoute
-  '/board/new': typeof BoardNewRoute
-  '/share/$uuid': typeof ShareUuidRoute
-  '/board/': typeof BoardIndexRoute
+  '/board/$uuid': typeof LayoutBoardUuidRoute
+  '/board/list': typeof LayoutBoardListRoute
+  '/board/live-api': typeof LayoutBoardLiveApiRoute
+  '/board/new': typeof LayoutBoardNewRoute
+  '/share/$uuid': typeof LayoutShareUuidRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
-  '/board/$uuid/edit': typeof BoardUuidEditRoute
-  '/board/$uuid/fork': typeof BoardUuidForkRoute
+  '/board/': typeof LayoutBoardIndexRoute
+  '/board/$uuid/edit': typeof LayoutBoardUuidEditRoute
+  '/board/$uuid/fork': typeof LayoutBoardUuidForkRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/board/$uuid': typeof BoardUuidRoute
-  '/board/list': typeof BoardListRoute
-  '/board/live-api': typeof BoardLiveApiRoute
-  '/board/new': typeof BoardNewRoute
-  '/share/$uuid': typeof ShareUuidRoute
-  '/board': typeof BoardIndexRoute
+  '/board/$uuid': typeof LayoutBoardUuidRoute
+  '/board/list': typeof LayoutBoardListRoute
+  '/board/live-api': typeof LayoutBoardLiveApiRoute
+  '/board/new': typeof LayoutBoardNewRoute
+  '/share/$uuid': typeof LayoutShareUuidRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
-  '/board/$uuid/edit': typeof BoardUuidEditRoute
-  '/board/$uuid/fork': typeof BoardUuidForkRoute
+  '/board': typeof LayoutBoardIndexRoute
+  '/board/$uuid/edit': typeof LayoutBoardUuidEditRoute
+  '/board/$uuid/fork': typeof LayoutBoardUuidForkRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/board/$uuid': typeof BoardUuidRoute
-  '/board/list': typeof BoardListRoute
-  '/board/live-api': typeof BoardLiveApiRoute
-  '/board/new': typeof BoardNewRoute
-  '/share/$uuid': typeof ShareUuidRoute
-  '/board/': typeof BoardIndexRoute
+  '/_layout': typeof LayoutRouteWithChildren
+  '/_layout/board/$uuid': typeof LayoutBoardUuidRoute
+  '/_layout/board/list': typeof LayoutBoardListRoute
+  '/_layout/board/live-api': typeof LayoutBoardLiveApiRoute
+  '/_layout/board/new': typeof LayoutBoardNewRoute
+  '/_layout/share/$uuid': typeof LayoutShareUuidRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
-  '/board/$uuid_/edit': typeof BoardUuidEditRoute
-  '/board/$uuid_/fork': typeof BoardUuidForkRoute
+  '/_layout/board/': typeof LayoutBoardIndexRoute
+  '/_layout/board/$uuid_/edit': typeof LayoutBoardUuidEditRoute
+  '/_layout/board/$uuid_/fork': typeof LayoutBoardUuidForkRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
     | '/board/$uuid'
     | '/board/list'
     | '/board/live-api'
     | '/board/new'
     | '/share/$uuid'
-    | '/board/'
     | '/api/trpc/$'
+    | '/board/'
     | '/board/$uuid/edit'
     | '/board/$uuid/fork'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/about'
     | '/board/$uuid'
     | '/board/list'
     | '/board/live-api'
     | '/board/new'
     | '/share/$uuid'
-    | '/board'
     | '/api/trpc/$'
+    | '/board'
     | '/board/$uuid/edit'
     | '/board/$uuid/fork'
   id:
     | '__root__'
     | '/'
-    | '/about'
-    | '/board/$uuid'
-    | '/board/list'
-    | '/board/live-api'
-    | '/board/new'
-    | '/share/$uuid'
-    | '/board/'
+    | '/_layout'
+    | '/_layout/board/$uuid'
+    | '/_layout/board/list'
+    | '/_layout/board/live-api'
+    | '/_layout/board/new'
+    | '/_layout/share/$uuid'
     | '/api/trpc/$'
-    | '/board/$uuid_/edit'
-    | '/board/$uuid_/fork'
+    | '/_layout/board/'
+    | '/_layout/board/$uuid_/edit'
+    | '/_layout/board/$uuid_/fork'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
-  BoardUuidRoute: typeof BoardUuidRoute
-  BoardListRoute: typeof BoardListRoute
-  BoardLiveApiRoute: typeof BoardLiveApiRoute
-  BoardNewRoute: typeof BoardNewRoute
-  ShareUuidRoute: typeof ShareUuidRoute
-  BoardIndexRoute: typeof BoardIndexRoute
+  LayoutRoute: typeof LayoutRouteWithChildren
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
-  BoardUuidEditRoute: typeof BoardUuidEditRoute
-  BoardUuidForkRoute: typeof BoardUuidForkRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
+    '/_layout': {
+      id: '/_layout'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof LayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -189,61 +176,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/board/': {
-      id: '/board/'
+    '/_layout/board/': {
+      id: '/_layout/board/'
       path: '/board'
       fullPath: '/board/'
-      preLoaderRoute: typeof BoardIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/share/$uuid': {
-      id: '/share/$uuid'
-      path: '/share/$uuid'
-      fullPath: '/share/$uuid'
-      preLoaderRoute: typeof ShareUuidRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/board/new': {
-      id: '/board/new'
-      path: '/board/new'
-      fullPath: '/board/new'
-      preLoaderRoute: typeof BoardNewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/board/live-api': {
-      id: '/board/live-api'
-      path: '/board/live-api'
-      fullPath: '/board/live-api'
-      preLoaderRoute: typeof BoardLiveApiRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/board/list': {
-      id: '/board/list'
-      path: '/board/list'
-      fullPath: '/board/list'
-      preLoaderRoute: typeof BoardListRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/board/$uuid': {
-      id: '/board/$uuid'
-      path: '/board/$uuid'
-      fullPath: '/board/$uuid'
-      preLoaderRoute: typeof BoardUuidRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/board/$uuid_/fork': {
-      id: '/board/$uuid_/fork'
-      path: '/board/$uuid/fork'
-      fullPath: '/board/$uuid/fork'
-      preLoaderRoute: typeof BoardUuidForkRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/board/$uuid_/edit': {
-      id: '/board/$uuid_/edit'
-      path: '/board/$uuid/edit'
-      fullPath: '/board/$uuid/edit'
-      preLoaderRoute: typeof BoardUuidEditRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof LayoutBoardIndexRouteImport
+      parentRoute: typeof LayoutRoute
     }
     '/api/trpc/$': {
       id: '/api/trpc/$'
@@ -252,21 +190,87 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTrpcSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_layout/share/$uuid': {
+      id: '/_layout/share/$uuid'
+      path: '/share/$uuid'
+      fullPath: '/share/$uuid'
+      preLoaderRoute: typeof LayoutShareUuidRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/board/new': {
+      id: '/_layout/board/new'
+      path: '/board/new'
+      fullPath: '/board/new'
+      preLoaderRoute: typeof LayoutBoardNewRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/board/live-api': {
+      id: '/_layout/board/live-api'
+      path: '/board/live-api'
+      fullPath: '/board/live-api'
+      preLoaderRoute: typeof LayoutBoardLiveApiRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/board/list': {
+      id: '/_layout/board/list'
+      path: '/board/list'
+      fullPath: '/board/list'
+      preLoaderRoute: typeof LayoutBoardListRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/board/$uuid': {
+      id: '/_layout/board/$uuid'
+      path: '/board/$uuid'
+      fullPath: '/board/$uuid'
+      preLoaderRoute: typeof LayoutBoardUuidRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/board/$uuid_/fork': {
+      id: '/_layout/board/$uuid_/fork'
+      path: '/board/$uuid/fork'
+      fullPath: '/board/$uuid/fork'
+      preLoaderRoute: typeof LayoutBoardUuidForkRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/board/$uuid_/edit': {
+      id: '/_layout/board/$uuid_/edit'
+      path: '/board/$uuid/edit'
+      fullPath: '/board/$uuid/edit'
+      preLoaderRoute: typeof LayoutBoardUuidEditRouteImport
+      parentRoute: typeof LayoutRoute
+    }
   }
 }
 
+interface LayoutRouteChildren {
+  LayoutBoardUuidRoute: typeof LayoutBoardUuidRoute
+  LayoutBoardListRoute: typeof LayoutBoardListRoute
+  LayoutBoardLiveApiRoute: typeof LayoutBoardLiveApiRoute
+  LayoutBoardNewRoute: typeof LayoutBoardNewRoute
+  LayoutShareUuidRoute: typeof LayoutShareUuidRoute
+  LayoutBoardIndexRoute: typeof LayoutBoardIndexRoute
+  LayoutBoardUuidEditRoute: typeof LayoutBoardUuidEditRoute
+  LayoutBoardUuidForkRoute: typeof LayoutBoardUuidForkRoute
+}
+
+const LayoutRouteChildren: LayoutRouteChildren = {
+  LayoutBoardUuidRoute: LayoutBoardUuidRoute,
+  LayoutBoardListRoute: LayoutBoardListRoute,
+  LayoutBoardLiveApiRoute: LayoutBoardLiveApiRoute,
+  LayoutBoardNewRoute: LayoutBoardNewRoute,
+  LayoutShareUuidRoute: LayoutShareUuidRoute,
+  LayoutBoardIndexRoute: LayoutBoardIndexRoute,
+  LayoutBoardUuidEditRoute: LayoutBoardUuidEditRoute,
+  LayoutBoardUuidForkRoute: LayoutBoardUuidForkRoute,
+}
+
+const LayoutRouteWithChildren =
+  LayoutRoute._addFileChildren(LayoutRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
-  BoardUuidRoute: BoardUuidRoute,
-  BoardListRoute: BoardListRoute,
-  BoardLiveApiRoute: BoardLiveApiRoute,
-  BoardNewRoute: BoardNewRoute,
-  ShareUuidRoute: ShareUuidRoute,
-  BoardIndexRoute: BoardIndexRoute,
+  LayoutRoute: LayoutRouteWithChildren,
   ApiTrpcSplatRoute: ApiTrpcSplatRoute,
-  BoardUuidEditRoute: BoardUuidEditRoute,
-  BoardUuidForkRoute: BoardUuidForkRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

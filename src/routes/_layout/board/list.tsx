@@ -4,7 +4,7 @@ import { useAllBoards } from '#/hooks/useBoard.ts';
 
 import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createFileRoute('/board/list')({
+export const Route = createFileRoute('/_layout/board/list')({
   component: BoardListPage,
   ssr: false,
   head: () => ({

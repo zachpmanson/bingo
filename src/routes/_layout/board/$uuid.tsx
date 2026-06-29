@@ -5,7 +5,7 @@ import BoardArea from '#/components/BoardArea.tsx';
 import { recordOpenedBoard } from '#/hooks/useOpenedBoards.ts';
 import { seo } from '#/lib/seo';
 
-export const Route = createFileRoute('/board/$uuid')({
+export const Route = createFileRoute('/_layout/board/$uuid')({
   component: App,
   ssr: false,
   head: () => ({
@@ -25,7 +25,7 @@ function App() {
   }, [uuid]);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col">
       <BoardArea uuid={uuid} />
     </div>
   );

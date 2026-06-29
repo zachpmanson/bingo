@@ -5,7 +5,7 @@ import { detailedSuffix, hasItems } from '#/lib/utils.ts';
 
 import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createFileRoute('/board/')({
+export const Route = createFileRoute('/_layout/board/')({
   component: AllBoardsPage,
   ssr: false,
   head: () => ({

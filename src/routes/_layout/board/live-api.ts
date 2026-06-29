@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { serverBoardsCollection } from '#/server/boards';
 
-export const Route = createFileRoute('/board/live-api')({
+export const Route = createFileRoute('/_layout/board/live-api')({
   server: {
     handlers: {
       GET: ({ request }) => {
