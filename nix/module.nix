@@ -2,13 +2,18 @@ self: { config, lib, pkgs, ... }:
 
 let
   cfg = config.services.bingo;
+  sourceInfo = self.sourceInfo or {};
+  rev = sourceInfo.shortRev or "";
+  buildTime = toString (sourceInfo.lastModified or 0);
 in {
   options.services.bingo = {
     enable = lib.mkEnableOption "bingo server";
 
     package = lib.mkOption {
       type = lib.types.package;
-      default = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
+      default = self.packages.${pkgs.stdenv.hostPlatform.system}.default.override {
+        inherit rev buildTime;
+      };
       description = "The bingo package to use.";
     };
 
