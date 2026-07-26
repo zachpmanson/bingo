@@ -38,7 +38,7 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
     board.cells.filter((c) => c.text.trim() !== '').length +
     (newItemText.trim() ? 1 : 0);
   const hasEnoughItems = filledCount >= needed;
-  const canCreate = hasName && (!isShuffled || hasEnoughItems);
+  const canCreate = hasName;
 
   // Switching kind keeps the texts the user already typed: going to fixed
   // normalizes the pool to exactly size² cells; going to shuffled keeps them all.
@@ -188,9 +188,7 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
         {isShuffled ? (
           <div className="flex flex-col gap-2 w-full">
             <p className="text-sm text-gray-600">
-              {hasEnoughItems
-                ? `${board.size}×${board.size} → ${filledCount}+ items (each link draws a random ${needed}) `
-                : `Add at least ${needed} items (${needed - filledCount} more needed).`}
+              {`${board.size}×${board.size} → ${filledCount}+ items${hasEnoughItems ? ` (each link draws a random ${needed})` : ``}`}
             </p>
             <input
               className="border border-black border-solid p-2 flex-1"
