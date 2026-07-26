@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> {}, lib }:
+{ pkgs ? import <nixpkgs> {}, lib, rev ? null, buildTime ? null }:
 
 let
   pnpmDeps = pkgs.fetchPnpmDeps {
@@ -21,6 +21,8 @@ pkgs.stdenv.mkDerivation {
 
   buildPhase = ''
     runHook preBuild
+    export VITE_BUILD_REV="${if rev != null then rev else ""}"
+    export VITE_BUILD_TIME="${if buildTime != null then buildTime else ""}"
     pnpm build
     runHook postBuild
   '';
