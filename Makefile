@@ -15,5 +15,5 @@ clean:
 format:
 	pnpm format
 
-deploy: build
-	rsync -r --delete dist/ bingo:/
+deploy:
+	ssh bingo
