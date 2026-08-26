@@ -1,6 +1,7 @@
 import { useBoards } from '#/hooks/useBoard.ts';
 import { useClipboard } from '#/hooks/useClipboard.ts';
 import { basicBoardTitle } from '#/lib/utils.ts';
+import { useCurrentUser } from '#/integrations/trpc/auth';
 import { useEffect } from 'react';
 import Button from './Button';
 
@@ -10,6 +11,7 @@ import Button from './Button';
 // a copy. This is where you land after creating a shuffled board.
 export default function BoardOwnerView({ uuid }: { uuid: string }) {
   const board = useBoards(uuid);
+  const user = useCurrentUser();
   const { share, copiedKey } = useClipboard();
 
   useEffect(() => {
@@ -17,6 +19,26 @@ export default function BoardOwnerView({ uuid }: { uuid: string }) {
   }, [board?.name]);
 
   if (!board) return <div className="p-4">Loading...</div>;
+
+  // This manage surface is for the board's creator. An owned board belongs to a
+  // different account than the current one — show a fork affordance instead so
+  // the visitor gets their own editable copy, never another's config.
+  if (board.owner && board.owner !== user) {
+    return (
+      <div className="p-4 flex flex-col items-center gap-3">
+        <span className="text-xl" style={{ fontFamily: "'Impact','Anton', Impact, sans-serif" }}>
+          {board.name}
+        </span>
+        <p className="text-sm text-[var(--sea-ink-soft)]">
+          This board belongs to another account ({board.owner}). You can make
+          your own copy of it to edit.
+        </p>
+        <Button to={'/board/$uuid/fork'} params={{ uuid: board.id }}>
+          Fork a Copy
+        </Button>
+      </div>
+    );
+  }
 
   const isShuffled = board.kind === 'shuffled';
   const summary = isShuffled

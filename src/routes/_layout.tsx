@@ -1,4 +1,5 @@
 import { Link, Outlet, createFileRoute } from '@tanstack/react-router';
+import { UserBadge } from '#/integrations/trpc/auth';
 
 export const Route = createFileRoute('/_layout')({
   component: Layout,
@@ -8,6 +9,9 @@ function Layout() {
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex-1">
+        <header className="relative z-10 flex items-center justify-between gap-3 border-b border-[var(--line)] px-4 py-2">
+          <UserBadge />
+        </header>
         <Outlet />
       </div>
       <footer className="flex items-center justify-center gap-4 p-4">
