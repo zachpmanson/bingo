@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LayoutBoardIndexRouteImport } from './routes/_layout/board/index'
@@ -21,6 +22,11 @@ import { Route as LayoutBoardUuidRouteImport } from './routes/_layout/board/$uui
 import { Route as LayoutBoardUuidForkRouteImport } from './routes/_layout/board/$uuid_.fork'
 import { Route as LayoutBoardUuidEditRouteImport } from './routes/_layout/board/$uuid_.edit'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => rootRouteImport,
@@ -78,6 +84,7 @@ const LayoutBoardUuidEditRoute = LayoutBoardUuidEditRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
   '/board/$uuid': typeof LayoutBoardUuidRoute
   '/board/list': typeof LayoutBoardListRoute
   '/board/live-api': typeof LayoutBoardLiveApiRoute
@@ -90,6 +97,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
   '/board/$uuid': typeof LayoutBoardUuidRoute
   '/board/list': typeof LayoutBoardListRoute
   '/board/live-api': typeof LayoutBoardLiveApiRoute
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_layout': typeof LayoutRouteWithChildren
+  '/login': typeof LoginRoute
   '/_layout/board/$uuid': typeof LayoutBoardUuidRoute
   '/_layout/board/list': typeof LayoutBoardListRoute
   '/_layout/board/live-api': typeof LayoutBoardLiveApiRoute
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/login'
     | '/board/$uuid'
     | '/board/list'
     | '/board/live-api'
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/login'
     | '/board/$uuid'
     | '/board/list'
     | '/board/live-api'
@@ -143,6 +154,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_layout'
+    | '/login'
     | '/_layout/board/$uuid'
     | '/_layout/board/list'
     | '/_layout/board/live-api'
@@ -157,11 +169,19 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LayoutRoute: typeof LayoutRouteWithChildren
+  LoginRoute: typeof LoginRoute
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_layout': {
       id: '/_layout'
       path: ''
@@ -270,6 +290,7 @@ const LayoutRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LayoutRoute: LayoutRouteWithChildren,
+  LoginRoute: LoginRoute,
   ApiTrpcSplatRoute: ApiTrpcSplatRoute,
 }
 export const routeTree = rootRouteImport

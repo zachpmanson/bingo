@@ -7,6 +7,10 @@ function handler({ request }: { request: Request }) {
     req: request,
     router: trpcRouter,
     endpoint: '/api/trpc',
+    // Trust-the-edge: the identity comes from the X-Auth-User header Caddy
+    // stamps for authenticated requests (null on anonymous). The app never
+    // parses credentials itself.
+    createContext: () => ({ user: request.headers.get('x-auth-user') ?? null }),
   });
 }
 

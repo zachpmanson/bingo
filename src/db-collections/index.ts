@@ -36,6 +36,11 @@ export const BoardSchema = z.object({
   // generates a random size² subset. Defaults to 'fixed' so pre-existing
   // persisted boards (without this field) load unchanged.
   kind: z.enum(['fixed', 'shuffled']).default('fixed'),
+  // Who owns this board's editable content. Owned boards may only be edited by
+  // that owner; ownerless (null/absent) boards stay open to any user, preserving
+  // the pre-auth behaviour. Set server-side on create (from the edge's
+  // x-auth-user) and never trusted from the client on its own.
+  owner: z.string().optional(),
   // How many boards have been generated from this one via its share link
   // (copies of a fixed board, random draws of a shuffled board).
   childCount: z.number().default(0),

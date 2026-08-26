@@ -1,6 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { boardsCollection, type Board, type Cell } from '../db-collections';
+import { useCurrentUser } from '#/integrations/trpc/auth';
 import Button from './Button';
 import { BoardWrapper, Cell as CellView } from './Cell';
 
@@ -8,6 +9,7 @@ const emptyCell = (): Cell => ({ text: '', checked: false });
 
 export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
   const navigate = useNavigate();
+  const user = useCurrentUser();
   const [newItemText, setNewItemText] = useState('');
   const [board, setBoard] = useState<Board>(
     initialBoard
@@ -84,6 +86,12 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
     }));
 
   const isEditing = Boolean(initialBoard?.id);
+  // Owned boards are editable in place only by their owner. An ownerless board
+  // stays open to anyone (pre-auth behaviour). Editing someone else's owned
+  // board instead creates a fresh copy — you can't overwrite their content.
+  const canEditOriginal =
+    !isEditing || !initialBoard?.owner || initialBoard.owner === user;
+  const creatingCopy = isEditing && !canEditOriginal;
 
   const save = () => {
     if (!canCreate) return;
@@ -96,7 +104,7 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
       : existingCells;
     const cells = allCells.map((c) => ({ text: c.text, checked: false }));
 
-    if (isEditing) {
+    if (isEditing && canEditOriginal) {
       // Edit in place: the owner is changing this board's own content, so keep
       // its id/sharingId (existing share links stay valid) and update the
       // record rather than forking a fresh copy.
@@ -110,8 +118,9 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
       return;
     }
 
-    // A newly created board is a fresh source: it has no parent and no children
-    // yet.
+    // A newly created board is a fresh source; a fork of someone else's owned
+    // board is a new independent copy (their original stays untouched). Either
+    // way we mint a brand-new identity so it never aliases the original.
     const { childIndex: _childIndex, ...rest } = board;
     const newBoard: Board = {
       ...rest,
@@ -119,6 +128,9 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
       id: crypto.randomUUID(),
       sharingId: crypto.randomUUID(),
       childCount: 0,
+      // Only used to reflect ownership locally; the server is authoritative
+      // and re-stamps owner from the edge identity on insert anyway.
+      owner: user ?? undefined,
       cells,
     };
     boardsCollection.insert(newBoard);
@@ -160,7 +172,9 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
               />
             </label>
             <Button disabled={!canCreate} onClick={save}>
-              {isEditing ? 'Save' : 'Create Board'}
+              {isEditing
+                ? creatingCopy ? 'Fork Copy' : 'Save'
+                : 'Create Board'}
             </Button>
           </div>
           <fieldset className="flex gap-4">

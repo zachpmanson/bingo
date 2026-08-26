@@ -60,7 +60,16 @@ export const serverBoardsCollection = createCollection(
 );
 
 for (const row of selectAllStmt.all() as Array<{ data: string }>) {
-  serverBoardsCollection.insert(JSON.parse(row.data) as Board);
+  const board = JSON.parse(row.data) as Board;
+  // Pre-auth board claim (mirrors spells' `owner` backfill): boards saved
+  // before user accounts are ownerless, so claim them for the default owner so
+  // they're protected like any newly-created board. Idempotent — only touches
+  // rows with no owner — and persisted straight back so the DB matches.
+  if (!board.owner) {
+    board.owner = 'zach';
+    upsertStmt.run(board.id, board.sharingId, JSON.stringify(board));
+  }
+  serverBoardsCollection.insert(board);
 }
 
 serverBoardsCollection.subscribeChanges((changes) => {
