@@ -1,6 +1,7 @@
 import type { Cell as CellType } from '#/db-collections';
 import { boardsCollection } from '#/db-collections';
 import { useBoards } from '#/hooks/useBoard.ts';
+import { useCurrentUser } from '#/integrations/trpc/auth';
 import { useClipboard } from '#/hooks/useClipboard.ts';
 import { getCompletedLines, lineToSource } from '#/lib/bingo.ts';
 import { basicBoardTitle } from '#/lib/utils.ts';
@@ -26,6 +27,14 @@ export default function BoardArea({ uuid }: { uuid: string }) {
   const board = useBoards(uuid);
   const { share, copy, copiedKey } = useClipboard();
   const navigate = useNavigate();
+  const user = useCurrentUser();
+
+  // The edge-authenticated user is the board's owner — they may edit its
+  // content/config (server-enforced owner-gating on update). Show an Edit
+  // affordance for them here. `board` may be undefined before the first sync,
+  // so guard for its presence in the owner check and JSX (as the rest of the
+  // file does).
+  const isOwner = !!user && !!board && board.owner === user;
 
   // A shuffled board is an item-pool template, not a playable grid — send the
   // owner to its management view instead.
@@ -142,6 +151,11 @@ export default function BoardArea({ uuid }: { uuid: string }) {
       )}
       {board && (
         <div className="flex justify-center gap-2">
+          {isOwner && (
+            <Button to={'/board/$uuid/edit'} params={{ uuid: board.id }}>
+              Edit
+            </Button>
+          )}
           <Button onClick={() => void copy('progress', buildSummary(false))}>
             {copiedKey === 'progress' ? 'Copied!' : 'Copy Summary'}
           </Button>
