@@ -47,11 +47,30 @@ export function UserBadge() {
 
   if (!checked) return null;
 
+  // Edge logout. Identity is HTTP Basic auth stamped by Caddy, so there is no
+  // server session to destroy. Caddy accepts a reserved `guest` account (see
+  // the api route's createContext) and the app treats it as anonymous — so
+  // signing in as guest SILENTLY signs out (no 401/popup). Land on / (a public
+  // page, anonymous-readable) so guest is served without tripping a gate. The
+  // root document's baseURI-scrub script then rewrites the credential-bearing
+  // URL to a clean / before any fetch runs.
+  const edgeLogout = () => {
+    const { protocol, host } = window.location;
+    window.location.href = `${protocol}//guest:guest@${host}/`;
+  };
+
   return user ? (
-    <span className="fixed bottom-4 right-4 z-50 flex h-11 min-w-11 items-center justify-center gap-1 rounded-full border border-[var(--line)] bg-[var(--header-bg)] px-3 text-xs font-medium text-[var(--sea-ink)] shadow-lg backdrop-blur">
+    <span className="fixed bottom-4 right-4 z-50 flex h-11 min-w-11 items-center justify-center gap-2 rounded-full border border-[var(--line)] bg-[var(--header-bg)] px-3 text-xs font-medium text-[var(--sea-ink)] shadow-lg backdrop-blur">
       <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
       <span className="hidden sm:inline">signed in as {user}</span>
       <span className="sm:hidden">{user}</span>
+      <button
+        type="button"
+        onClick={edgeLogout}
+        className="text-[var(--sea-ink-soft)] underline transition hover:text-[var(--sea-ink)]"
+      >
+        sign out
+      </button>
     </span>
   ) : (
     <a
