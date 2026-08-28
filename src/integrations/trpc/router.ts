@@ -50,9 +50,13 @@ const boardsRouter = {
     .input(BoardSchema)
     .output(BoardSchema)
     .mutation(({ input, ctx }) => {
-      // Owner is server-authoritative: stamp it from the edge identity, never
-      // trust whatever the client sent as `owner`.
-      const board = { ...input, owner: ctx.user ?? undefined };
+      // Owner and creation time are server-authoritative: stamp them from the
+      // edge identity and server clock, never trust the client's copy.
+      const board = {
+        ...input,
+        owner: ctx.user ?? undefined,
+        createdAt: Date.now(),
+      };
       serverBoardsCollection.insert(board);
       return board;
     }),
@@ -65,12 +69,15 @@ const boardsRouter = {
       assertBoardEditable(input.id, ctx.user);
       const existing = serverBoardsCollection.state.get(input.id);
       // Preserve the board's claimed owner (or claim it for the editing user if
-      // it was ownerless), keeping `owner` out of client control.
+      // it was ownerless), keeping `owner` out of client control. Likewise keep
+      // the original createdAt — an edit must not reorder the board in the
+      // creation-date home list.
       const effectiveOwner = existing?.owner ?? ctx.user ?? undefined;
+      const createdAt = existing?.createdAt ?? Date.now();
       serverBoardsCollection.update(input.id, (draft) => {
-        Object.assign(draft, input, { owner: effectiveOwner });
+        Object.assign(draft, input, { owner: effectiveOwner, createdAt });
       });
-      return { ...input, owner: effectiveOwner };
+      return { ...input, owner: effectiveOwner, createdAt };
     }),
   setCell: publicProcedure
     .input(

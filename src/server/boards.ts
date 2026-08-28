@@ -47,7 +47,9 @@ const upsertStmt = db.prepare(
   'INSERT OR REPLACE INTO boards (id, sharing_id, data) VALUES (?, ?, ?)',
 );
 const deleteStmt = db.prepare('DELETE FROM boards WHERE id = ?');
-const selectAllStmt = db.prepare('SELECT data FROM boards');
+const selectAllStmt = db.prepare(
+  'SELECT rowid, data FROM boards ORDER BY rowid',
+);
 const selectBySharingIdStmt = db.prepare(
   'SELECT data FROM boards WHERE sharing_id = ?',
 );
@@ -59,14 +61,30 @@ export const serverBoardsCollection = createCollection(
   }),
 );
 
-for (const row of selectAllStmt.all() as Array<{ data: string }>) {
+// Backfill epoch for boards created before the createdAt field existed (this
+// deploy). Rowid order ≈ insertion order, so the synthetic stamps preserve a
+// stable, monotonic creation-date ordering.
+const LEGACY_EPOCH = Date.UTC(2026, 0, 1);
+
+for (const row of selectAllStmt.all() as Array<{
+  rowid: number;
+  data: string;
+}>) {
   const board = JSON.parse(row.data) as Board;
+  let touched = false;
   // Pre-auth board claim (mirrors spells' `owner` backfill): boards saved
   // before user accounts are ownerless, so claim them for the default owner so
   // they're protected like any newly-created board. Idempotent — only touches
   // rows with no owner — and persisted straight back so the DB matches.
   if (!board.owner) {
     board.owner = 'zach';
+    touched = true;
+  }
+  if (!board.createdAt) {
+    board.createdAt = LEGACY_EPOCH + row.rowid;
+    touched = true;
+  }
+  if (touched) {
     upsertStmt.run(board.id, board.sharingId, JSON.stringify(board));
   }
   serverBoardsCollection.insert(board);

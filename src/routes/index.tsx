@@ -34,8 +34,12 @@ export default function HomePage() {
   if (user) {
     list = boards
       .filter((b) => b.owner === user)
-      // stable cross-device order: name, then id as a tiebreaker.
-      .sort((a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id));
+      // newest-created first, id tiebreaker for same-ms stamps/backfill
+      .sort(
+        (a, b) =>
+          (b.createdAt ?? 0) - (a.createdAt ?? 0) ||
+          b.id.localeCompare(a.id),
+      );
     has = list.length > 0;
   } else {
     // Resolve the device's opened ids against synced boards, preserving

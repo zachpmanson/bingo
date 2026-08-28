@@ -34,6 +34,7 @@ export const Route = createFileRoute('/_layout/share/$uuid')({
           id: crypto.randomUUID(),
           sharingId: crypto.randomUUID(),
           childCount: 0,
+          createdAt: Date.now(),
           childIndex,
           parentId: source.id,
           cells,

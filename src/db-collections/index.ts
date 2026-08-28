@@ -41,6 +41,11 @@ export const BoardSchema = z.object({
   // the pre-auth behaviour. Set server-side on create (from the edge's
   // x-auth-user) and never trusted from the client on its own.
   owner: z.string().optional(),
+  // Epoch ms the board was created. Stamped server-side on insert (never
+  // trusted from the client); legacy boards missing it are backfilled from
+  // SQLite rowid order (≈ insertion order) at startup. Used to order the
+  // signed-in home list by creation date.
+  createdAt: z.number().optional(),
   // How many boards have been generated from this one via its share link
   // (copies of a fixed board, random draws of a shuffled board).
   childCount: z.number().default(0),

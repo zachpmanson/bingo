@@ -128,6 +128,7 @@ export default function BoardEdit({ initialBoard }: { initialBoard?: Board }) {
       id: crypto.randomUUID(),
       sharingId: crypto.randomUUID(),
       childCount: 0,
+      createdAt: Date.now(),
       // Only used to reflect ownership locally; the server is authoritative
       // and re-stamps owner from the edge identity on insert anyway.
       owner: user ?? undefined,
