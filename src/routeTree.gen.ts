@@ -20,6 +20,7 @@ import { Route as LayoutBoardLiveApiRouteImport } from './routes/_layout/board/l
 import { Route as LayoutBoardListRouteImport } from './routes/_layout/board/list'
 import { Route as LayoutBoardUuidRouteImport } from './routes/_layout/board/$uuid'
 import { Route as LayoutBoardUuidForkRouteImport } from './routes/_layout/board/$uuid_.fork'
+import { Route as LayoutBoardUuidEditTemplateRouteImport } from './routes/_layout/board/$uuid_.edit-template'
 import { Route as LayoutBoardUuidEditRouteImport } from './routes/_layout/board/$uuid_.edit'
 
 const LoginRoute = LoginRouteImport.update({
@@ -76,6 +77,12 @@ const LayoutBoardUuidForkRoute = LayoutBoardUuidForkRouteImport.update({
   path: '/board/$uuid/fork',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutBoardUuidEditTemplateRoute =
+  LayoutBoardUuidEditTemplateRouteImport.update({
+    id: '/board/$uuid_/edit-template',
+    path: '/board/$uuid/edit-template',
+    getParentRoute: () => LayoutRoute,
+  } as any)
 const LayoutBoardUuidEditRoute = LayoutBoardUuidEditRouteImport.update({
   id: '/board/$uuid_/edit',
   path: '/board/$uuid/edit',
@@ -93,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/board/': typeof LayoutBoardIndexRoute
   '/board/$uuid/edit': typeof LayoutBoardUuidEditRoute
+  '/board/$uuid/edit-template': typeof LayoutBoardUuidEditTemplateRoute
   '/board/$uuid/fork': typeof LayoutBoardUuidForkRoute
 }
 export interface FileRoutesByTo {
@@ -106,6 +114,7 @@ export interface FileRoutesByTo {
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/board': typeof LayoutBoardIndexRoute
   '/board/$uuid/edit': typeof LayoutBoardUuidEditRoute
+  '/board/$uuid/edit-template': typeof LayoutBoardUuidEditTemplateRoute
   '/board/$uuid/fork': typeof LayoutBoardUuidForkRoute
 }
 export interface FileRoutesById {
@@ -121,6 +130,7 @@ export interface FileRoutesById {
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/_layout/board/': typeof LayoutBoardIndexRoute
   '/_layout/board/$uuid_/edit': typeof LayoutBoardUuidEditRoute
+  '/_layout/board/$uuid_/edit-template': typeof LayoutBoardUuidEditTemplateRoute
   '/_layout/board/$uuid_/fork': typeof LayoutBoardUuidForkRoute
 }
 export interface FileRouteTypes {
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/api/trpc/$'
     | '/board/'
     | '/board/$uuid/edit'
+    | '/board/$uuid/edit-template'
     | '/board/$uuid/fork'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/api/trpc/$'
     | '/board'
     | '/board/$uuid/edit'
+    | '/board/$uuid/edit-template'
     | '/board/$uuid/fork'
   id:
     | '__root__'
@@ -163,6 +175,7 @@ export interface FileRouteTypes {
     | '/api/trpc/$'
     | '/_layout/board/'
     | '/_layout/board/$uuid_/edit'
+    | '/_layout/board/$uuid_/edit-template'
     | '/_layout/board/$uuid_/fork'
   fileRoutesById: FileRoutesById
 }
@@ -252,6 +265,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutBoardUuidForkRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/board/$uuid_/edit-template': {
+      id: '/_layout/board/$uuid_/edit-template'
+      path: '/board/$uuid/edit-template'
+      fullPath: '/board/$uuid/edit-template'
+      preLoaderRoute: typeof LayoutBoardUuidEditTemplateRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/board/$uuid_/edit': {
       id: '/_layout/board/$uuid_/edit'
       path: '/board/$uuid/edit'
@@ -270,6 +290,7 @@ interface LayoutRouteChildren {
   LayoutShareUuidRoute: typeof LayoutShareUuidRoute
   LayoutBoardIndexRoute: typeof LayoutBoardIndexRoute
   LayoutBoardUuidEditRoute: typeof LayoutBoardUuidEditRoute
+  LayoutBoardUuidEditTemplateRoute: typeof LayoutBoardUuidEditTemplateRoute
   LayoutBoardUuidForkRoute: typeof LayoutBoardUuidForkRoute
 }
 
@@ -281,6 +302,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutShareUuidRoute: LayoutShareUuidRoute,
   LayoutBoardIndexRoute: LayoutBoardIndexRoute,
   LayoutBoardUuidEditRoute: LayoutBoardUuidEditRoute,
+  LayoutBoardUuidEditTemplateRoute: LayoutBoardUuidEditTemplateRoute,
   LayoutBoardUuidForkRoute: LayoutBoardUuidForkRoute,
 }
 
