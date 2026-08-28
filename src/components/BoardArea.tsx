@@ -1,10 +1,10 @@
 import type { Cell as CellType } from '#/db-collections';
 import { boardsCollection } from '#/db-collections';
-import { useBoards } from '#/hooks/useBoard.ts';
+import { useAllBoards, useBoards } from '#/hooks/useBoard.ts';
 import { useCurrentUser } from '#/integrations/trpc/auth';
 import { useClipboard } from '#/hooks/useClipboard.ts';
 import { getCompletedLines, lineToSource } from '#/lib/bingo.ts';
-import { basicBoardTitle } from '#/lib/utils.ts';
+import { basicBoardTitle, editTarget } from '#/lib/utils.ts';
 import { useNavigate } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 import Button from './Button';
@@ -25,6 +25,7 @@ function buildEmojiGrid(cells: CellType[], size: number): string {
 
 export default function BoardArea({ uuid }: { uuid: string }) {
   const board = useBoards(uuid);
+  const allBoards = useAllBoards();
   const { share, copy, copiedKey } = useClipboard();
   const navigate = useNavigate();
   const user = useCurrentUser();
@@ -35,6 +36,11 @@ export default function BoardArea({ uuid }: { uuid: string }) {
   // so guard for its presence in the owner check and JSX (as the rest of the
   // file does).
   const isOwner = !!user && !!board && board.owner === user;
+  // If this board is a generated child, resolve its parent template so Edit can
+  // point the owner at the template (the source of truth) rather than the draw.
+  const parent = board?.parentId
+    ? allBoards.find((b) => b.id === board.parentId)
+    : undefined;
 
   // A shuffled board is an item-pool template, not a playable grid — send the
   // owner to its management view instead.
@@ -153,8 +159,8 @@ export default function BoardArea({ uuid }: { uuid: string }) {
         <div className="flex justify-center gap-2">
           {isOwner && (
             <Button
-              to={board.kind === 'shuffled' ? '/board/$uuid/edit-template' : '/board/$uuid/edit'}
-              params={{ uuid: board.id }}
+              to={editTarget(board, parent, user).to}
+              params={editTarget(board, parent, user).params}
             >
               Edit
             </Button>

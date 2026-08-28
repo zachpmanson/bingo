@@ -1,6 +1,6 @@
-import { useBoards } from '#/hooks/useBoard.ts';
+import { useAllBoards, useBoards } from '#/hooks/useBoard.ts';
 import { useClipboard } from '#/hooks/useClipboard.ts';
-import { basicBoardTitle } from '#/lib/utils.ts';
+import { basicBoardTitle, editTarget } from '#/lib/utils.ts';
 import { useCurrentUser } from '#/integrations/trpc/auth';
 import { useEffect } from 'react';
 import Button from './Button';
@@ -11,8 +11,15 @@ import Button from './Button';
 // a copy. This is where you land after creating a shuffled board.
 export default function BoardOwnerView({ uuid }: { uuid: string }) {
   const board = useBoards(uuid);
+  const allBoards = useAllBoards();
   const user = useCurrentUser();
   const { share, copiedKey } = useClipboard();
+
+  // Resolve the parent template for a generated child so Edit sends the owner
+  // to the template editor (the source of truth), not the manage view of a draw.
+  const parent = board?.parentId
+    ? allBoards.find((b) => b.id === board.parentId)
+    : undefined;
 
   useEffect(() => {
     if (board?.name) document.title = basicBoardTitle(board);
@@ -45,6 +52,15 @@ export default function BoardOwnerView({ uuid }: { uuid: string }) {
     ? `${board.cells.length} items → ${board.size}×${board.size} (each link draws a random ${board.size * board.size})`
     : `${board.size}×${board.size}`;
 
+  // This manage surface IS the /board/$uuid/edit destination, so an Edit button
+  // that would land right back here is pointless — hide it (e.g. a plain fixed
+  // board with no template to edit). Children with an owned parent point at the
+  // parent's template editor; shuffled boards at their own template editor.
+  const editGoesTo = editTarget(board, parent, user);
+  const editIsSelfLoop =
+    editGoesTo.to === '/board/$uuid/edit' &&
+    editGoesTo.params.uuid === board.id;
+
   return (
     <div className="py-4 px-4 flex flex-col gap-4 items-center">
       <span
@@ -71,9 +87,14 @@ export default function BoardOwnerView({ uuid }: { uuid: string }) {
         >
           {copiedKey === 'copy' ? 'Copied!' : 'Copy Random Link'}
         </Button>
-        <Button to={'/board/$uuid/edit-template'} params={{ uuid: board.id }}>
-          Edit
-        </Button>
+        {!editIsSelfLoop && (
+          <Button
+            to={editGoesTo.to}
+            params={editGoesTo.params}
+          >
+            Edit
+          </Button>
+        )}
       </div>
       <ul className="flex flex-col gap-1 w-full max-w-[70ch]">
         {[...board.cells].reverse().map((cell, reversedIndex) => (

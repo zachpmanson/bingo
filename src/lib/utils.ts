@@ -30,3 +30,26 @@ export function detailedSuffix(b: Board) {
   }
   return `(${b.size}x${b.size})`;
 }
+
+// Where the owner's Edit button should send them for a board they own.
+// A generated child board belongs to its parent template: for the template's
+// owner, editing it means editing the template (the source of truth), not the
+// fixed draw they're looking at — so a child redirects to the parent's
+// template editor. A shuffled board is itself a template, so it goes straight
+// to its own template editor. Everything else falls back to the manage view.
+export function editTarget(
+  board: Board,
+  parent: Board | undefined,
+  user: string | null | undefined,
+): {
+  to: '/board/$uuid/edit' | '/board/$uuid/edit-template';
+  params: { uuid: string };
+} {
+  if (board.parentId && parent?.owner && parent.owner === user) {
+    return { to: '/board/$uuid/edit-template', params: { uuid: parent.id } };
+  }
+  if (board.kind === 'shuffled') {
+    return { to: '/board/$uuid/edit-template', params: { uuid: board.id } };
+  }
+  return { to: '/board/$uuid/edit', params: { uuid: board.id } };
+}
