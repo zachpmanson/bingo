@@ -1,6 +1,6 @@
 import Button from '#/components/Button.tsx';
 import { useAllBoards } from '#/hooks/useBoard.ts';
-import { useCurrentUser } from '#/integrations/trpc/auth';
+import { UserBadge, useCurrentUser } from '#/integrations/trpc/auth';
 import { useOpenedBoardIds } from '#/hooks/useOpenedBoards.ts';
 import { seo } from '#/lib/seo';
 import { detailedSuffix } from '#/lib/utils.ts';
@@ -49,6 +49,10 @@ export default function HomePage() {
 
   return (
     <div>
+      {/* Login/sign-out pill in the corner — the home route isn't under the
+          _layout wrapper that renders the floating UserBadge for board pages.
+          Mount it here too so the homepage always shows the auth pill. */}
+      <UserBadge />
       <div className="flex flex-col gap-3 p-2">
         <h1>Your Boards</h1>
         <Button to="/board/new" className="w-full">

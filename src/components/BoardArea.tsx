@@ -152,7 +152,10 @@ export default function BoardArea({ uuid }: { uuid: string }) {
       {board && (
         <div className="flex justify-center gap-2">
           {isOwner && (
-            <Button to={'/board/$uuid/edit'} params={{ uuid: board.id }}>
+            <Button
+              to={board.kind === 'shuffled' ? '/board/$uuid/fork' : '/board/$uuid/edit'}
+              params={{ uuid: board.id }}
+            >
               Edit
             </Button>
           )}
