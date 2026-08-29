@@ -28,12 +28,13 @@ export function useCurrentUser(): string | null {
   return user;
 }
 
-// Floating sign-in bubble. Fixed to the bottom-right corner; on mount it asks
-// the server who's signed in, then renders a compact round bubble showing either
-// "signed in as zach" or a "sign in" control. The link/Pointer is a PLAIN <a>
-// to /login — full page navigation so the browser's Basic-auth dialog appears;
-// a client-side <Link> fetches the route and a fetch-based 401 never shows the
-// credential prompt (the lesson spells learned).
+// Floating sign-in pill. Fixed to the bottom-right corner; on mount it asks
+// the server who's signed in, then renders a compact pill showing either
+// "signed in as zach" + "sign out" or a "sign in" pill. Matches spells'
+// UserBadge pattern, styled for bingo's light theme tokens. The link is a
+// PLAIN <a> to /login — full page navigation so the browser's Basic-auth
+// dialog appears; a client-side <Link> fetches the route and a fetch-based
+// 401 never shows the credential prompt (the lesson spells learned).
 export function UserBadge() {
   const [user, setUser] = useState<string | null>(null);
   const [checked, setChecked] = useState(false);
@@ -59,40 +60,28 @@ export function UserBadge() {
     window.location.href = `${protocol}//guest:guest@${host}/`;
   };
 
-  return user ? (
-    <span className="fixed bottom-4 right-4 z-50 flex h-11 min-w-11 items-center justify-center gap-2 rounded-full border border-[var(--line)] bg-[var(--header-bg)] px-3 text-xs font-medium text-[var(--sea-ink)] shadow-lg backdrop-blur">
-      <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
-      <span className="hidden sm:inline">signed in as {user}</span>
-      <span className="sm:hidden">{user}</span>
-      <button
-        type="button"
-        onClick={edgeLogout}
-        className="text-[var(--sea-ink-soft)] underline transition hover:text-[var(--sea-ink)]"
-      >
-        sign out
-      </button>
-    </span>
-  ) : (
-    <a
-      href="/login"
-      title="Sign in"
-      className="fixed bottom-4 right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--header-bg)] text-xl text-[var(--sea-ink)] shadow-lg backdrop-blur transition hover:bg-[var(--link-bg-hover)]"
-    >
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden
-      >
-        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-        <polyline points="10 17 15 12 10 7" />
-        <line x1="15" y1="12" x2="3" y2="12" />
-      </svg>
-    </a>
+  return (
+    <div className="pointer-events-none fixed bottom-3 right-3 z-50 flex flex-col items-end gap-1">
+      {user ? (
+        <div className="flex items-center gap-2 rounded-full bg-[var(--header-bg)] px-3 py-1 text-xs font-medium text-[var(--sea-ink)] ring-1 ring-[var(--line)]">
+          <span>signed in as {user}</span>
+          <button
+            type="button"
+            onClick={edgeLogout}
+            className="pointer-events-auto text-[var(--sea-ink-soft)] underline transition hover:text-[var(--sea-ink)]"
+          >
+            sign out
+          </button>
+        </div>
+      ) : (
+        <a
+          href="/login"
+          className="pointer-events-auto rounded-full bg-[var(--header-bg)] px-3 py-1 text-xs font-medium text-[var(--sea-ink-soft)] ring-1 ring-[var(--line)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
+          title="Sign in to edit"
+        >
+          sign in
+        </a>
+      )}
+    </div>
   );
 }
