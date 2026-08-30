@@ -33,7 +33,10 @@ export default function BoardOwnerView({ uuid }: { uuid: string }) {
   if (board.owner && board.owner !== user) {
     return (
       <div className="p-4 flex flex-col items-center gap-3">
-        <span className="text-xl" style={{ fontFamily: "'Impact','Anton', Impact, sans-serif" }}>
+        <span
+          className="text-xl"
+          style={{ fontFamily: "'Impact','Anton', Impact, sans-serif" }}
+        >
           {board.name}
         </span>
         <p className="text-sm text-[var(--sea-ink-soft)]">
@@ -75,7 +78,7 @@ export default function BoardOwnerView({ uuid }: { uuid: string }) {
           ? 'No boards generated yet'
           : `${board.childCount} board${board.childCount === 1 ? '' : 's'} generated`}
       </p>
-      <div className="flex justify-center gap-2">
+      <div className="flex flex-wrap justify-center gap-2">
         <Button
           onClick={() =>
             void share(
@@ -88,10 +91,7 @@ export default function BoardOwnerView({ uuid }: { uuid: string }) {
           {copiedKey === 'copy' ? 'Copied!' : 'Copy Random Link'}
         </Button>
         {!editIsSelfLoop && (
-          <Button
-            to={editGoesTo.to}
-            params={editGoesTo.params}
-          >
+          <Button to={editGoesTo.to} params={editGoesTo.params}>
             Edit
           </Button>
         )}

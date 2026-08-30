@@ -156,7 +156,7 @@ export default function BoardArea({ uuid }: { uuid: string }) {
         </div>
       )}
       {board && (
-        <div className="flex justify-center gap-2">
+        <div className="flex flex-wrap justify-center gap-2">
           {isOwner && (
             <Button
               to={editTarget(board, parent, user).to}
